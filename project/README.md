@@ -17,5 +17,5 @@ Add the peace agreements to the map
 Analyze correlations of the violence level increase or decrease with the peace agreements.
 Add here a sketch of your planning for the next project milestone.
 
-# Questions for TAa
+# Questions for TA
 Add here some questions you have for us, in general or project-specific.

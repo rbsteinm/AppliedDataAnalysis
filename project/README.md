@@ -7,7 +7,7 @@ The United Nations often gets criticized for all the wars it could not prevent a
 A list of research questions you would like to address during the project. 
 
 # Dataset
-To fulfill our research goals, we will muse the UCDP dataset. This dataset is composed of multiple csv files that can be linked together via dyads. A dyad consists of two conflicting primary parties. This dataset being quite small, we will not have to use the EPFL cluster to pursue our studies. AS the UCDP dataset holds a collection of violent events starting from 1946, we might enrich the datset with the Gdelt dataset.
+To fulfill our research goals, we will muse the UCDP dataset. This dataset is composed of multiple csv files that can be linked together via dyads. A dyad consists of two conflicting primary parties. This dataset being quite small, we will not have to use the EPFL cluster to pursue our studies. If time allows it, we would like to investigate on the GDELT and UCDP dataset the patterns and signatures of violent events and see if we can define structures and repeating processes.
 
 List the dataset(s) you want to use, and some ideas on how do you expect to get, manage, process and enrich it/them. Show us you've read the docs and some examples, and you've a clear idea on what to expect. Discuss data size and format if relevant.
 

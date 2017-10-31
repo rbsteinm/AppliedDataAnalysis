@@ -5,17 +5,18 @@ The United Nations often gets criticized for all the wars it could not prevent a
 
 # Research questions
 A list of research questions you would like to address during the project. 
+- Does a peace treaty from the Un enables to acquire stabiity in a given region and for how long ?
+- Are there levels in the peace treaties that can lead to predict how big will be its impact ?
 
 # Dataset
-To fulfill our research goals, we will muse the UCDP dataset. This dataset is composed of multiple csv files that can be linked together via dyads. A dyad consists of two conflicting primary parties. This dataset being quite small, we will not have to use the EPFL cluster to pursue our studies. If time allows it, we would like to investigate on the GDELT and UCDP dataset the patterns and signatures of violent events and see if we can define structures and repeating processes.
+To fulfill our research goals, we will use the UCDP dataset. This dataset is composed of multiple csv files that can be linked together via dyads. A dyad consists of two conflicting primary parties. This dataset being quite small, we will not have to use the EPFL cluster to pursue our studies. If time allows it, we would like to investigate on the GDELT and UCDP dataset the patterns and signatures of **violent events** and see if we can define structures and repeating processes.
 
 List the dataset(s) you want to use, and some ideas on how do you expect to get, manage, process and enrich it/them. Show us you've read the docs and some examples, and you've a clear idea on what to expect. Discuss data size and format if relevant.
 
 # A list of internal milestones up until project milestone 2
-Make an interactive geographical map of violent events trhoughout time.
-Add the peace agreements to the map
-Analyze correlations of the violence level increase or decrease with the peace agreements.
-Add here a sketch of your planning for the next project milestone.
+- Make an interactive geographical map of violent events trhoughout time.
+- Add the peace agreements to the map
+- Analyze correlations of the violence level increase or decrease with the peace agreements.
 
-# Questions for TA
+# Questions for TAs
 Add here some questions you have for us, in general or project-specific.

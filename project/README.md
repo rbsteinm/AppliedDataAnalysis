@@ -27,18 +27,16 @@ We plan to use the *UCDP GED* to get information about all the conflicts (mainly
 At the moment, these datasets seem to have all the information we need to answer our problematic. However, if it turns out to be necessary, we will enrich the data with the *GDELT datasets*. 
 
 
-# A list of internal milestones up until project milestone 2
-Here is what we would like to perform for the second milestone:
+# What will we do until the final milestone?
 
-- Week 1 and 2:
-  - Get a clean dataset 
-  - Prepare the data so it is easy to plot it on a map
-- Week 3:  
-  - Perform descriptive statistics on the different conflicts and peace agreements (average number of deaths, group by countries/regions , % of peace agreements, correlations etc...)
-- Week 4:  
-  - Display the events on a map for a single year
+## Visual representation of the information
 
-# Questions for TAs
+The next big step is to represent the evolution of the warring countries and the peace aggreements on a world map. We plan to build an interactive visualization in javascript, most likely using Mike Bostock's famous 'D3JS' library. There will be a timeline and the data on the map will evolve over time. We are not sure yet how time will flow. It could be triggered by the user, for example just by scrolling, or moving a slider or it could flow automatically with some timer.
 
-- Do you find this problematic appropriate for the project's needs?
-- Will we be introduced on how to make a proper data story? 
+At the moment, we are still experimenting and don't know exactly how we are going to represent the conflicts on the map. We have two main ideas in mind:
+- pinpoint each single conflict event as a point that appears and disappears on the map at the right time. This is more precise but might make the map really crowded and the information less clear.
+- Aggregate the conflicts at the level of countries, and constantly update the color that fills each country by changing the shade of red/green/... to clearly express how long each country has been in war and/or the intensity of the conflict. Although in the scenario we loose precision, aggregating the information makes it easier to read and understand.
+
+We plan to experiment with D3JS to find out which solution is the closest to what we want to achieve.
+
+Of course, we will also add to our data story the results of our data exploration and the propensity score that we computed from the data. Then, depending on how long all this will take, we might also add some kind of information panel that would display insights about the peace treaties and conflicts while the user scrolls though time.

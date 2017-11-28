@@ -42,3 +42,11 @@ At the moment, we are still experimenting and don't know exactly how we are goin
 We plan to experiment with D3JS to find out which solution is the closest to what we want to achieve.
 
 Of course, we will also add to our data story the results of our data exploration and the propensity score that we computed from the data. Then, depending on how long all this will take, we might also add some kind of information panel that would display insights about the peace treaties and conflicts while the user scrolls though time.
+
+## What is the impact of the UN?
+
+After a first propensity score matching on the peace agreements themselves, we observed that the UN did not really have an impact on the stability.
+
+But this analysis is still a bit naive. Indeed, we did not check that the conflicts that were solves were the equally distributed in regions, number of deaths, etc. Maybe the UN peace treaties were for deadly conflicts in very unstable regions whereas the others solved small conflicts in stable region.
+
+A matching on the conflicts will allow us to answer our problematic, that is do the United Nations peace agreements have an impact on conflicts resolution around the world ?

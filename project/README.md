@@ -26,7 +26,7 @@ We plan to use the *UCDP/PRIO Armed Conflict Dataset* to get information about a
 
 At the moment, these datasets seem to have all the information we need to answer our problematic. However, if it turns out to be necessary, we will enrich the data with the *GDELT datasets*.
 
-*edit*: After exploring the data during milestone 2, we found all the information we need in the UCDP dataset. Thus, we most likely won't need other datasets.
+*edit*: After exploring the data during milestone 2, we found all the information we need in the UCDP dataset. Thus, we most likely won't need other datasets. **Note that the entire data analysis is located in the *DataExploration* notebook.** Please refer to it for further details on how we familiarized with the data.
 
 
 # What will we do until the final milestone?

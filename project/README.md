@@ -22,9 +22,11 @@ To fulfil our research goals, we will use the Uppsala Conflict Data Program (UCD
 
 We will mainly use the *UCDP Georeferenced Event Dataset* (GED) which gives a lot of information (including geographical coordinates) about every conflict that happened from 1946 and the *UCDP peace agreement Dataset* that gives information on how these conflicts were solved from 1975 to 2011. We can link peace agreements to conflict events thanks to the conflict ID. We used the codebooks available on the UCDP website to fully understand these datasets, the data that is available and how it is organised. 
 
-We plan to use the *UCDP GED* to get information about all the conflicts (mainly casualties and location) and then use the *UCDP peace agreement dataset* to see which of theses conflicts were resolved and if some new conflicts appear at the same location shortly after.
+We plan to use the *UCDP/PRIO Armed Conflict Dataset* to get information about all the conflicts (mainly casualties and location) and then use the *UCDP peace agreement dataset* to see which of theses conflicts were resolved and if some new conflicts appear at the same location shortly after.
 
-At the moment, these datasets seem to have all the information we need to answer our problematic. However, if it turns out to be necessary, we will enrich the data with the *GDELT datasets*. 
+At the moment, these datasets seem to have all the information we need to answer our problematic. However, if it turns out to be necessary, we will enrich the data with the *GDELT datasets*.
+
+*edit*: After exploring the data during milestone 2, we found all the information we need in the UCDP dataset. Thus, we most likely won't need other datasets.
 
 
 # What will we do until the final milestone?

@@ -75,8 +75,6 @@
         .enter().append("path")
         .attr("d", d3.geoPath().projection(projection))
         .attr('id', country => country.properties.name);
-
-        mapLayer.select('path#Russia').style('fill', 'orange');
     });
 
     // ___________________________________________ IMPORT DATA ___________________________________________
@@ -114,8 +112,16 @@
         d3.select('#year').html(date.getFullYear());
     }
 
-    function update(){
-        current_date = d3.timeDay.offset(current_date, STEP_SIZE);
+
+    // This function is called at each mouseWheelEvent
+    // direction: true if scroll forward, false if backwards
+    function update(direction){
+        if(direction){
+            current_date = d3.timeDay.offset(current_date, STEP_SIZE);
+        }
+        else{
+            current_date = d3.timeDay.offset(current_date, -STEP_SIZE);
+        }
         printDate(current_date);
         Object.keys(conflicts).forEach(function(c){
             if(isInConflict(current_date, c)){
@@ -144,12 +150,20 @@
 
 
     //create zoom handler 
-var zoom_handler = d3.zoom()
-    .on("zoom", update);
+    //TODO wheel backwards (wheelDelta?)
+    /*var zoom_handler = d3.zoom()
+        .on("zoom", function(d){
+            console.log(d3.event.transform);
+            update();
+        });
 
     //add zoom behaviour to the svg element backing our graph.  
     //same thing as svg.call(zoom_handler); 
-    zoom_handler(svg);
+    zoom_handler(svg);*/
+
+    svg.node().addEventListener("mousewheel", function(e){
+        update(e.wheelDelta > 0)
+    }, false);
 
 
 

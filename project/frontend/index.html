@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+    <style type="text/css">
+        #container{
+            position: fixed;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            bottom: 0px;
+            background-color: grey;
+            width: 100%;
+            height: 100%;
+        }
+
+        #dateContainer{
+            position: fixed;
+            left: 5px;
+            top: 5px;
+            width: 7%;
+            height:50px;
+            background-color: white;
+            opacity: 0.6;
+            border-radius: 10px;
+            text-align:center;
+            line-height: 50px;
+            display:block;
+        }
+
+        #month{
+            width: 30px;
+            display: inline-block;
+        }
+    </style>
+    <script src="https://d3js.org/d3.v4.min.js"> </script>
+</head>
+<body>
+    <div id='container'>
+        <div id='dateContainer'>
+            <span id='month'></span>
+            <span id='year'></span>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const PATH_TO_MAP = './data/countries.geo.json';
+    const STEP_SIZE = 50; // represents the speed of the slider
+    const START_DATE = new Date("1945-01-01");
+    const END_DATE = new Date("2017-01-01");
+    let current_date = START_DATE;
+    let container = d3.select("#container");
+    let countries;
+    let conflicts = {};
+    //let width = container.node().clientWidth;
+    //let height = container.node().clientHeight;
+    let width = 960;
+    let height = 700;
+
+    // ___________________________________________ MAP DISPLAY ___________________________________________
+
+    let svg = container.append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+    let mapLayer = svg.append('g');
+
+    // projection of the world map
+    var projection = d3.geoMercator().scale(width / 2 / Math.PI).translate([width/2, height/2+140]);
+    
+    d3.json(PATH_TO_MAP, function(err, geojson) {
+
+        countries = mapLayer.selectAll("path")
+        .data(geojson.features)
+        .enter().append("path")
+        .attr("d", d3.geoPath().projection(projection))
+        .attr('id', country => country.properties.name);
+
+        mapLayer.select('path#Russia').style('fill', 'orange');
+    });
+
+    // ___________________________________________ IMPORT DATA ___________________________________________
+
+    // Loading the data
+    d3.tsv("./data/conflicts.csv")
+    .row(function(d) {
+        var startdatesplit = d.startdate.split('-');
+        var startdate = new Date(parseInt(startdatesplit[0]), parseInt(startdatesplit[1])-1, parseInt(startdatesplit[2]));
+        var enddatesplit = d.enddate.split('-');
+        var enddate = new Date(parseInt(enddatesplit[0]), parseInt(enddatesplit[1])-1, parseInt(enddatesplit[2]));
+        if(!conflicts[d.location]){
+            conflicts[d.location] = [];
+        }
+        conflicts[d.location].push({'start':startdate, 'end':enddate});
+        return {
+            location: d.location,
+            sidea: d.sidea,
+            sideb: d.sideb,
+            startdate: startdate,
+            enddate: enddate
+        };
+    })
+    .get(function(err, rows) {
+        if (err) return console.error(err);
+        window.site_data = rows;
+    });
+
+
+    // ___________________________________________ UPDATE MAP ___________________________________________
+
+    // print the input date in the date container
+    function printDate(date){
+        d3.select('#month').html(MONTH_NAMES[date.getMonth()]);
+        d3.select('#year').html(date.getFullYear());
+    }
+
+    function update(){
+        current_date = d3.timeDay.offset(current_date, STEP_SIZE);
+        printDate(current_date);
+        Object.keys(conflicts).forEach(function(c){
+            if(isInConflict(current_date, c)){
+                mapLayer.select('path#'+c).style('fill', 'red');
+            }
+            else{
+                mapLayer.select('path#'+c).style('fill', 'green');
+            }
+            //document.getElementById(c.properties.name).style.color = 'blue'
+        });
+    }
+
+
+    function isInConflict(date, country){
+        return conflicts[country].some(conflict => (date > conflict.start && date < conflict.end));
+    }
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+
+    //create zoom handler 
+var zoom_handler = d3.zoom()
+    .on("zoom", update);
+
+    //add zoom behaviour to the svg element backing our graph.  
+    //same thing as svg.call(zoom_handler); 
+    zoom_handler(svg);
+
+
+
+</script>
+</html>

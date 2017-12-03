@@ -1,12 +1,12 @@
 <!--
-TODO LIST
-Borders should be still visible when green/red contries
-onmouseover -> display name popup
-import and display peace treaties
-info pannel on the right
-onclick -> display all events of the clicked country
-timeline on the bottom ?
-extra: double click -> show induvidual events inside country
+Todo-List
+TODO Borders should be still visible when green/red contries
+TODO import and display peace treaties
+TODO info pannel on the right
+TODO onclick -> display all events of the clicked country
+TODO timeline on the bottom ?
+TODO extra: double click -> show induvidual events inside country
+DONE onmouseover -> display name popup
 -->
 
 <!doctype html>
@@ -42,6 +42,11 @@ extra: double click -> show induvidual events inside country
             width: 30px;
             display: inline-block;
         }
+        path {
+            stroke: rgb(200, 200, 200);
+            stroke-width: 0.5px;
+        }
+
     </style>
     <script src="https://d3js.org/d3.v4.min.js"> </script>
 </head>
@@ -111,7 +116,16 @@ extra: double click -> show induvidual events inside country
         .data(geojson.features)
         .enter().append("path")
         .attr("d", d3.geoPath().projection(projection))
-        .attr('id', country => country.properties.name);
+        .attr('id', country => country.properties.name)
+        .on('mouseover', function(d,i){
+            d3.select(this).style('stroke', 'rgb(255, 255, 255)');
+            d3.select(this).style('stroke-width', 2);
+        })
+        .on('mouseout', function(d, i){
+            d3.select(this).style('stroke', 'rgb(200, 200, 200)');
+            d3.select(this).style('stroke-width', 0.5);
+        })
+        .append('svg:title').text(function(d, i){return d.properties.name});
     });
 
 

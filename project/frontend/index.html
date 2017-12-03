@@ -111,65 +111,73 @@
     // This function is called at each mouseWheelEvent
     // direction: true if scroll forward, false if backwards
     function update(direction){
-        console.log(conflicts['Russia']);
+        // are we scrolling up or down?
         if(direction){
             current_date = d3.timeDay.offset(current_date, STEP_SIZE);
         }
         else{
             current_date = d3.timeDay.offset(current_date, -STEP_SIZE);
         }
+        // update the countries' colors
         getStatusDuration(current_date, 'Russia');
         printDate(current_date);
         Object.keys(conflicts).forEach(function(c){
-            if(isInConflict(current_date, c)){
-                /*if(c == 'Russia'){
-                    console.log('russia red')
-                    mapLayer.select('path#Russia').style('fill', 'red');
-                }*/
+            let statusDuration = getStatusDuration(current_date, c);
+            let color = getColor(statusDuration.status, statusDuration.duration);
+            mapLayer.select('path#'+c).style('fill', color);
+            /*if(isInConflict(current_date, c)){
                 mapLayer.select('path#'+c).style('fill', 'red');
-                console.log(c + ' is filled in red');
             }
-            else if(!isInConflict(current_date, c)){
-                /*if(c == 'Russia') console.log('russia green')*/
+            else{
                 mapLayer.select('path#'+c).style('fill', 'green');
-            }
-            //document.getElementById(c.properties.name).style.color = 'blue'
+            }*/
         });
     }
 
 
     // returns true if there is at least one conflict in the country, false otherwise
     function isInConflict(date, country){
-        if(country == 'Russia'){
-            //console.log('russia debug')
-            //console.log(conflicts[country].filter(conflict => (date > conflict.start && date < conflict.end)))
-            //console.log( conflicts[country].some(conflict => (date > conflict.start && date < conflict.end)))
-        }
         return conflicts[country].some(conflict => (date > conflict.start && date < conflict.end));
     }
 
+    // input: a duration in ms
+    // output: the same duration in days
+    function msToDays(ms){
+        return Math.round(ms/(1000*60*60*24));
+    }
 
-    // This function returns the status of the country at the given date(conflict/no conflict)
+    // This function returns the status of the country at the given date
     // and for how long this status has been lasting
+    // true: conflict, false: no conflict (i.e. peace)
     function getStatusDuration(current_date, country){
         let ongoingConflits = conflicts[country].filter(c => (current_date > c.start && current_date < c.end));
+        let status, duration;
         //console.log(ongoingConflits);
+        //console.log('size: ' + ongoingConflits.length);
 
         // The country is at peace
-        if(ongoingConflits.size == 0){
-            console.log("no conflict");
-            console.log(current_date - d3.max(ongoingConflits.map(c => c.end).filter(end => end < current_date)));
+        if(ongoingConflits.length == 0){
+            //console.log("no conflict");
+            status = false;
+            let latestPeaceDay = d3.max([START_DATE, d3.max(conflicts[country].map(c => c.end).filter(end => end < current_date))]);
+            //console.log('latest peace day: ' + latestPeaceDay);
+            duration = msToDays(current_date - latestPeaceDay);
+            //console.log((conflicts[country].map(c => c.end).filter(end => end < current_date)));
         }
         // Only one conflict in the country at that time
-        else if(ongoingConflits.size == 1){
-            console.log("one conflict");
-            console.log(ongoingConflits.start - current_date);
+        else if(ongoingConflits.length == 1){
+            //console.log("one conflict");
+            status = true;
+            duration = msToDays(current_date - ongoingConflits[0].start);
         }
         // more than one conflict at that time
         else{
-            console.log("several conflicts");
-            console.log(d3.min(ongoingConflits, c => c.start) - current_date);
+            //console.log("several conflicts");
+            status = true;
+            duration = msToDays(current_date - d3.min(ongoingConflits, c => c.start));
         }
+        //console.log(duration + " days");
+        return {'status': status, 'duration':duration};
     }
 
     function getRandomColor() {
@@ -179,6 +187,11 @@
             color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
+    }
+
+    function getColor(status, duration){
+        if(status) return 'red';
+        else return 'green';
     }
 
 

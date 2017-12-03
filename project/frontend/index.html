@@ -86,21 +86,16 @@
         var startdate = new Date(parseInt(startdatesplit[0]), parseInt(startdatesplit[1])-1, parseInt(startdatesplit[2]));
         var enddatesplit = d.enddate.split('-');
         var enddate = new Date(parseInt(enddatesplit[0]), parseInt(enddatesplit[1])-1, parseInt(enddatesplit[2]));
-        if(!conflicts[d.location]){
-            conflicts[d.location] = [];
-        }
-        conflicts[d.location].push({'start':startdate, 'end':enddate});
-        return {
-            location: d.location,
-            sidea: d.sidea,
-            sideb: d.sideb,
-            startdate: startdate,
-            enddate: enddate
-        };
+        // split locations, in case there are several locations for a single conflict
+        d.location.split(',').forEach(function(location){
+            // create the dict entry if it does not exist yet
+            if(!conflicts[location]) conflicts[location] = [];
+            // push the data in the dict
+            conflicts[location].push({'start':startdate, 'end':enddate});
+        });
     })
     .get(function(err, rows) {
         if (err) return console.error(err);
-        window.site_data = rows;
     });
 
 
@@ -116,18 +111,26 @@
     // This function is called at each mouseWheelEvent
     // direction: true if scroll forward, false if backwards
     function update(direction){
+        console.log(conflicts['Russia']);
         if(direction){
             current_date = d3.timeDay.offset(current_date, STEP_SIZE);
         }
         else{
             current_date = d3.timeDay.offset(current_date, -STEP_SIZE);
         }
+        getStatusDuration(current_date, 'Russia');
         printDate(current_date);
         Object.keys(conflicts).forEach(function(c){
             if(isInConflict(current_date, c)){
+                /*if(c == 'Russia'){
+                    console.log('russia red')
+                    mapLayer.select('path#Russia').style('fill', 'red');
+                }*/
                 mapLayer.select('path#'+c).style('fill', 'red');
+                console.log(c + ' is filled in red');
             }
-            else{
+            else if(!isInConflict(current_date, c)){
+                /*if(c == 'Russia') console.log('russia green')*/
                 mapLayer.select('path#'+c).style('fill', 'green');
             }
             //document.getElementById(c.properties.name).style.color = 'blue'
@@ -135,8 +138,38 @@
     }
 
 
+    // returns true if there is at least one conflict in the country, false otherwise
     function isInConflict(date, country){
+        if(country == 'Russia'){
+            //console.log('russia debug')
+            //console.log(conflicts[country].filter(conflict => (date > conflict.start && date < conflict.end)))
+            //console.log( conflicts[country].some(conflict => (date > conflict.start && date < conflict.end)))
+        }
         return conflicts[country].some(conflict => (date > conflict.start && date < conflict.end));
+    }
+
+
+    // This function returns the status of the country at the given date(conflict/no conflict)
+    // and for how long this status has been lasting
+    function getStatusDuration(current_date, country){
+        let ongoingConflits = conflicts[country].filter(c => (current_date > c.start && current_date < c.end));
+        //console.log(ongoingConflits);
+
+        // The country is at peace
+        if(ongoingConflits.size == 0){
+            console.log("no conflict");
+            console.log(current_date - d3.max(ongoingConflits.map(c => c.end).filter(end => end < current_date)));
+        }
+        // Only one conflict in the country at that time
+        else if(ongoingConflits.size == 1){
+            console.log("one conflict");
+            console.log(ongoingConflits.start - current_date);
+        }
+        // more than one conflict at that time
+        else{
+            console.log("several conflicts");
+            console.log(d3.min(ongoingConflits, c => c.start) - current_date);
+        }
     }
 
     function getRandomColor() {
@@ -162,7 +195,7 @@
     zoom_handler(svg);*/
 
     svg.node().addEventListener("mousewheel", function(e){
-        update(e.wheelDelta > 0)
+        update(e.wheelDelta < 0)
     }, false);
 
 

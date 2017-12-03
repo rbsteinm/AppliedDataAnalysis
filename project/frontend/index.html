@@ -1,3 +1,14 @@
+<!--
+TODO LIST
+Borders should be still visible when green/red contries
+onmouseover -> display name popup
+import and display peace treaties
+info pannel on the right
+onclick -> display all events of the clicked country
+timeline on the bottom ?
+extra: double click -> show induvidual events inside country
+-->
+
 <!doctype html>
 <html>
 <head>
@@ -43,9 +54,12 @@
     </div>
 </body>
 <script type="text/javascript">
-    const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    // ___________________________________________ GLOBAL VARIABLES ___________________________________________
+
+    const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const PATH_TO_MAP = './data/countries.geo.json';
-    const STEP_SIZE = 50; // represents the speed of the slider
+    const STEP_SIZE = 40; // represents the speed of the slider
     const START_DATE = new Date("1945-01-01");
     const END_DATE = new Date("2017-01-01");
     let current_date = START_DATE;
@@ -57,25 +71,6 @@
     let width = 960;
     let height = 700;
 
-    // ___________________________________________ MAP DISPLAY ___________________________________________
-
-    let svg = container.append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
-    let mapLayer = svg.append('g');
-
-    // projection of the world map
-    var projection = d3.geoMercator().scale(width / 2 / Math.PI).translate([width/2, height/2+140]);
-    
-    d3.json(PATH_TO_MAP, function(err, geojson) {
-
-        countries = mapLayer.selectAll("path")
-        .data(geojson.features)
-        .enter().append("path")
-        .attr("d", d3.geoPath().projection(projection))
-        .attr('id', country => country.properties.name);
-    });
 
     // ___________________________________________ IMPORT DATA ___________________________________________
 
@@ -99,23 +94,50 @@
     });
 
 
+    // ___________________________________________ MAP DISPLAY ___________________________________________
+
+    let svg = container.append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+    let mapLayer = svg.append('g');
+
+    // projection of the world map
+    var projection = d3.geoMercator().scale(width / 2 / Math.PI).translate([width/2, height/2+140]);
+    
+    d3.json(PATH_TO_MAP, function(err, geojson) {
+
+        countries = mapLayer.selectAll("path")
+        .data(geojson.features)
+        .enter().append("path")
+        .attr("d", d3.geoPath().projection(projection))
+        .attr('id', country => country.properties.name);
+    });
+
+
     // ___________________________________________ UPDATE MAP ___________________________________________
 
-    // print the input date in the date container
+    svg.node().addEventListener("mousewheel", function(e){
+        update(e.wheelDelta < 0)
+    }, false);
+
+
+    // ___________________________________________ HELPER METHODS ___________________________________________
+
+    // prints the input date in the date container
     function printDate(date){
         d3.select('#month').html(MONTH_NAMES[date.getMonth()]);
         d3.select('#year').html(date.getFullYear());
     }
 
+    // This void function updates the global 'current_date' variable after a scrollEvent
+    // direction: the scroll direction that defines if we go back or forward in time
     function updateDate(direction){
         // are we scrolling up or down?
-        if(direction){
-            new_date = d3.timeDay.offset(current_date, STEP_SIZE);
-        }
-        else{
-            new_date = d3.timeDay.offset(current_date, -STEP_SIZE);
-        }
+        let step = direction ? STEP_SIZE : -STEP_SIZE;
+        let new_date = d3.timeDay.offset(current_date, step);
 
+        // clamp the date
         if(new_date < START_DATE){
             current_date = START_DATE;
         }
@@ -131,6 +153,7 @@
     // This function is called at each mouseWheelEvent
     // direction: true if scroll forward, false if backwards
     function update(direction){
+        // update the current date
         updateDate(direction);
         // update the countries' colors
         getStatusDuration(current_date, 'Russia');
@@ -139,12 +162,6 @@
             let statusDuration = getStatusDuration(current_date, c);
             let color = getColor(statusDuration.status, statusDuration.duration);
             mapLayer.select('path#'+c).style('fill', color);
-            /*if(isInConflict(current_date, c)){
-                mapLayer.select('path#'+c).style('fill', 'red');
-            }
-            else{
-                mapLayer.select('path#'+c).style('fill', 'green');
-            }*/
         });
     }
 
@@ -203,6 +220,10 @@
         return color;
     }
 
+    // returns the corresponding color (red for conflict, green for peace)
+    // the duration determines the intensity (saturation) of the color
+    // status: boolean indicating wether there is a conflict of not
+    // duration: for how long has this status been lasting?
     function getColor(status, duration){
         let hue = status ? 360 : 100;
         let scale = d3.scaleLinear().domain([0, 5000]).range([0.3, 1]).clamp(true);
@@ -211,25 +232,6 @@
         let color = d3.hsl(hue, saturation, 0.5);
         return color.rgb();
     }
-
-
-    //create zoom handler 
-    //TODO wheel backwards (wheelDelta?)
-    /*var zoom_handler = d3.zoom()
-        .on("zoom", function(d){
-            console.log(d3.event.transform);
-            update();
-        });
-
-    //add zoom behaviour to the svg element backing our graph.  
-    //same thing as svg.call(zoom_handler); 
-    zoom_handler(svg);*/
-
-    svg.node().addEventListener("mousewheel", function(e){
-        update(e.wheelDelta < 0)
-    }, false);
-
-
 
 </script>
 </html>

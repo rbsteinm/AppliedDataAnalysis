@@ -68,7 +68,7 @@ DONE Borders should be still visible when green/red contries
     const PATH_TO_MAP = './data/countries.geo.json';
     const STEP_SIZE = 40; // represents the speed of the slider
     const START_DATE = new Date("1945-01-01");
-    const END_DATE = new Date("2017-01-01");
+    const END_DATE = new Date("2016-12-31");
     let current_date = START_DATE;
     let container = d3.select("#container");
     let countries;
@@ -89,11 +89,11 @@ DONE Borders should be still visible when green/red contries
         var enddatesplit = d.enddate.split('-');
         var enddate = new Date(parseInt(enddatesplit[0]), parseInt(enddatesplit[1])-1, parseInt(enddatesplit[2]));
         // split locations, in case there are several locations for a single conflict
-        d.location.split(',').forEach(function(location){
+        d.locationID.split(',').forEach(function(loc_id){
             // create the dict entry if it does not exist yet
-            if(!conflicts[location]) conflicts[location] = [];
+            if(!conflicts[loc_id]) conflicts[loc_id] = [];
             // push the data in the dict
-            conflicts[location].push({'start':startdate, 'end':enddate});
+            conflicts[loc_id].push({'start':startdate, 'end':enddate, 'country_name':d.location});
         });
     })
     .get(function(err, rows) {
@@ -120,7 +120,7 @@ DONE Borders should be still visible when green/red contries
         .data(geojson.features)
         .enter().append("path")
         .attr("d", d3.geoPath().projection(projection))
-        .attr('id', country => country.properties.name)
+        .attr('id', country => country.id)
         .on('mouseover', function(d,i){
             d3.select(this).style('stroke', 'rgb(255, 255, 255)');
             d3.select(this).style('stroke-width', 2);
@@ -174,16 +174,11 @@ DONE Borders should be still visible when green/red contries
         // update the current date
         updateDate(direction);
         // update the countries' colors
-        getStatusDuration(current_date, 'Russia');
         printDate(current_date);
-        Object.keys(conflicts).forEach(function(c){
-            let statusDuration = getStatusDuration(current_date, c);
+        Object.keys(conflicts).forEach(function(cid){
+            let statusDuration = getStatusDuration(current_date, cid);
             let color = getColor(statusDuration.status, statusDuration.duration);
-            if(c == 'United States of America'){
-                console.log('USA');
-                console.log(statusDuration.status + ' ' + statusDuration.duration);
-            }
-            mapLayer.select('path#'+c).style('fill', color);
+            mapLayer.select('path#'+cid).style('fill', color);
         });
     }
 
@@ -202,6 +197,7 @@ DONE Borders should be still visible when green/red contries
     // This function returns the status of the country at the given date
     // and for how long this status has been lasting
     // true: conflict, false: no conflict (i.e. peace)
+    // country: country id
     function getStatusDuration(current_date, country){
         let ongoingConflits = conflicts[country].filter(c => (current_date > c.start && current_date < c.end));
         let status, duration;

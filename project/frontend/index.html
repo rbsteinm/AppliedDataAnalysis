@@ -1,12 +1,14 @@
 <!--
 Todo-List
-TODO fix bug: united states, korea, ... nothing displayed!
-TODO color switch smooth transition
+TODO: scrollable div
+TODO onclick country: filter the events and display only the events of this country
+TODO possibility to display only PAs, hide conflicts
 TODO import and display peace treaties
-TODO info pannel on the right
-TODO onclick -> display all events of the clicked country
+TODO onclick -> display events of the clicked country
 TODO timeline on the bottom ?
+TODO color switch smooth transition
 TODO extra: double click -> show induvidual events inside country
+DONE info pannel on the right
 DONE onmouseover -> display name popup
 DONE Borders should be still visible when green/red contries
 -->
@@ -15,25 +17,50 @@ DONE Borders should be still visible when green/red contries
 <html>
 <head>
     <style type="text/css">
+
+        body{
+            background-color: grey;
+        }
+
         #container{
+            position: relative;
+            overflow: auto;
+            width: 100%;
+            height:100%;
+        }
+
+        #mapContainer{
             position: fixed;
+            float: left;
             left: 0px;
             right: 0px;
             top: 0px;
             bottom: 0px;
-            background-color: grey;
-            width: 100%;
+            background-color: transparent;
+            width: 75%;
             height: 100%;
+        }
+        #infoContainer{
+            float: right;
+            width: 24%;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .infocell{
+            margin: 10px;
+            padding: 5px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.3);
         }
 
         #dateContainer{
             position: fixed;
-            left: 5px;
-            top: 5px;
+            left: 8px;
+            top: 8px;
             width: 7%;
             height:50px;
-            background-color: white;
-            opacity: 0.6;
+            background-color: rgba(255, 255, 255, 0.5);
             border-radius: 10px;
             text-align:center;
             line-height: 50px;
@@ -54,9 +81,12 @@ DONE Borders should be still visible when green/red contries
 </head>
 <body>
     <div id='container'>
-        <div id='dateContainer'>
-            <span id='month'></span>
-            <span id='year'></span>
+        <div id='infoContainer'></div>
+        <div id='mapContainer'>
+            <div id='dateContainer'>
+                <span id='month'></span>
+                <span id='year'></span>
+            </div>
         </div>
     </div>
 </body>
@@ -70,13 +100,20 @@ DONE Borders should be still visible when green/red contries
     const START_DATE = new Date("1945-01-01");
     const END_DATE = new Date("2016-12-31");
     let current_date = START_DATE;
-    let container = d3.select("#container");
+    let mapContainer = d3.select("#mapContainer");
     let countries;
     let conflicts = {};
-    //let width = container.node().clientWidth;
-    //let height = container.node().clientHeight;
-    let width = 960;
-    let height = 700;
+    let width = mapContainer.node().clientWidth;
+    let height = mapContainer.node().clientHeight;
+    let margin = 8;
+    //let width = 960;
+    //let height = 700;
+
+
+    // ___________________________________________ DOM ELEMENTS ___________________________________________
+
+    d3.select('#infoContainer').style('height', height-margin*2+'px');
+
 
 
     // ___________________________________________ IMPORT DATA ___________________________________________
@@ -93,19 +130,17 @@ DONE Borders should be still visible when green/red contries
             // create the dict entry if it does not exist yet
             if(!conflicts[loc_id]) conflicts[loc_id] = [];
             // push the data in the dict
-            conflicts[loc_id].push({'start':startdate, 'end':enddate, 'country_name':d.location});
+            conflicts[loc_id].push({'start':startdate, 'end':enddate, 'country_name':d.location, 'conflict_id':d.conflictid, 'sidea':d.sidea, 'sideb':d.sideb});
         });
     })
     .get(function(err, rows) {
         if (err) return console.error(err);
     });
 
-    console.log(conflicts); 
-
 
     // ___________________________________________ MAP DISPLAY ___________________________________________
 
-    let svg = container.append('svg')
+    let svg = mapContainer.append('svg')
         .attr('width', width)
         .attr('height', height);
 
@@ -138,6 +173,26 @@ DONE Borders should be still visible when green/red contries
     svg.node().addEventListener("mousewheel", function(e){
         update(e.wheelDelta < 0)
     }, false);
+
+
+    // ___________________________________________ UPDATE INFO PANEL ___________________________________________
+
+    function updateInfoPanel(infocells){
+        let cells = d3.select('div#infoContainer').selectAll('.infocell').data(infocells, d => d);
+        cells.exit().remove();
+        cells.enter()
+            .append('div')
+            .classed('infocell', true)
+            .text(d => d.conflict_id +  " " + d.sidea + " VS " + d.sideb);
+    }
+
+    // testing
+    let data = [];
+    for(let i = 0; i < 50; i++){
+        data.push('fewifhewrgihewrigherwiogherw');
+    }
+    //updateInfoPanel(data);
+
 
 
     // ___________________________________________ HELPER METHODS ___________________________________________
@@ -175,11 +230,16 @@ DONE Borders should be still visible when green/red contries
         updateDate(direction);
         // update the countries' colors
         printDate(current_date);
+        let ongoingConflits = new Set();
         Object.keys(conflicts).forEach(function(cid){
             let statusDuration = getStatusDuration(current_date, cid);
             let color = getColor(statusDuration.status, statusDuration.duration);
             mapLayer.select('path#'+cid).style('fill', color);
+            statusDuration.ongoingConflits.forEach(conflict => ongoingConflits.add(conflict));
         });
+        //console.log(ongoingConflits);
+        updateInfoPanel(Array.from(ongoingConflits));
+
     }
 
 
@@ -206,27 +266,21 @@ DONE Borders should be still visible when green/red contries
 
         // The country is at peace
         if(ongoingConflits.length == 0){
-            //console.log("no conflict");
             status = false;
             let latestPeaceDay = d3.max([START_DATE, d3.max(conflicts[country].map(c => c.end).filter(end => end < current_date))]);
-            //console.log('latest peace day: ' + latestPeaceDay);
             duration = msToDays(current_date - latestPeaceDay);
-            //console.log((conflicts[country].map(c => c.end).filter(end => end < current_date)));
         }
         // Only one conflict in the country at that time
         else if(ongoingConflits.length == 1){
-            //console.log("one conflict");
             status = true;
             duration = msToDays(current_date - ongoingConflits[0].start);
         }
         // more than one conflict at that time
         else{
-            //console.log("several conflicts");
             status = true;
             duration = msToDays(current_date - d3.min(ongoingConflits, c => c.start));
         }
-        //console.log(duration + " days");
-        return {'status': status, 'duration':duration};
+        return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits};
     }
 
     function getRandomColor() {

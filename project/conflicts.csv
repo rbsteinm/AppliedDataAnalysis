@@ -1,4 +1,4 @@
-conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agreement	duration	best	locationID
+conflictid	location	sidea	side b	incomp	cumint	type	startdate	enddate	region	agreement	duration	best	locationID
 200	Bolivia	Government of Bolivia	ELN	2	1	3	1946-07-18	1967-10-16	5	0	7760.0		BOL
 201	Cambodia	Government of France	Khmer Issarak	1	0	1	1946-08-31	1953-11-09	3	0	2627.0		KHM
 202	China	Government of China	PLA	2	1	3	1946-12-31	1949-12-08	3	0	1073.0		CHN
@@ -13,8 +13,8 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 211	Russia	Government of Russia (Soviet Union)	LNPA, LTS(p)A	1	0	3	1945-12-31	1946-12-31	1	0	365.0		RUS
 212	Russia	Government of Russia (Soviet Union)	BDPS	1	1	3	1946-06-30	1948-12-31	1	0	915.0		RUS
 213	Russia	Government of Russia (Soviet Union)	UPA	1	1	3	1941-12-31	1950-12-31	1	0	3287.0		RUS
-214	Thailand,France	Government of France	Government of Thailand	1	0	2	1946-05-07	1946-11-17	1, 3	0	194.0		THA,FRA
-215	Albania,United Kingdom	Government of Albania	Government of United Kingdom	1	0	2	1946-10-22	1946-12-31	1	0	70.0		ALB,GBR
+214	France,Thailand	Government of France	Government of Thailand	1	0	2	1946-05-07	1946-11-17	1, 3	0	194.0		FRA,THA
+215	United Kingdom,Albania	Government of Albania	Government of United Kingdom	1	0	2	1946-10-22	1946-12-31	1	0	70.0		GBR,ALB
 216	Vietnam	Government of France	Viet minh	1	1	1	1946-11-20	1954-07-20	3	0	2799.0		VNM
 217	China	Government of China	Taiwanese insurgents	1	1	3	1947-02-28	1947-03-24	3	0	24.0		CHN
 218	Pakistan,India	Government of India	Government of Pakistan	1	1	2	1948-12-31	2016-12-30	3	0	24836.0	1701.0	PAK,IND
@@ -27,18 +27,18 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 225	Costa Rica	Government of Costa Rica	National Liberation Army	2	1	3	1948-03-03	1948-04-20	5	0	48.0		CRI
 226	India	Government of Hyderabad	Government of India	1	1	2	1948-09-13	1948-09-18	3	0	5.0		IND
 227	India	Government of India	CPI-Maoist	2	1	3	1948-05-01	2016-12-23	3	0	25073.0	5861.0	IND
-228	Jordan,Iraq,Lebanon,Israel,Syria,Egypt	Government of Egypt, Government of Iraq, Government of Jordan, Government of Lebanon, Government of Syria	Government of Israel	1	1	2	1948-04-15	1949-01-07	2	0	267.0		JOR,IRQ,LBN,ISR,SYR,EGY
+228	Egypt,Lebanon,Jordan,Syria,Israel,Iraq	Government of Egypt, Government of Iraq, Government of Jordan, Government of Lebanon, Government of Syria	Government of Israel	1	1	2	1948-04-15	1949-01-07	2	0	267.0		EGY,LBN,JOR,SYR,ISR,IRQ
 229	Malaysia	Government of United Kingdom	CPM	1	1	1	1948-06-19	1957-08-31	3	0	3360.0		MYS
 230	Yemen	Government of Yemen (North Yemen)	Forces of Hadi	2	1	4	1948-03-15	2016-12-31	2	0	25128.0	15049.0	YEM
 231	Myanmar	Government of Myanmar (Burma)	KIO	1	1	3	1949-12-31	2016-12-14	3	0	24455.0	1577.0	MMR
 232	China,Taiwan	Government of China	Government of Taiwan	3	1	2	1949-10-31	1958-12-31	3	0	3348.0		CHN,TWN
 233	Guatemala	Government of Guatemala	URNG	2	1	3	1949-07-18	1995-12-31	5	1	16967.0	439.0	GTM
 234	Israel	Government of Israel	Hamas, PIJ	1	1	3	1948-05-15	2014-12-24	2	1	24329.0	6323.0	ISR
-235	South Korea,North Korea	Government of North Korea	Government of South Korea	1	1	2	1949-05-31	1953-07-27	3	0	1518.0		KOR,PRK
+235	North Korea,South Korea	Government of North Korea	Government of South Korea	1	1	2	1949-05-31	1953-07-27	3	0	1518.0		PRK,KOR
 236	China	Government of China	Tibet	1	1	3	1950-10-07	1959-04-23	3	0	3120.0		CHN
 237	Indonesia	Government of Indonesia	Republic of South Moluccas	1	1	3	1950-08-05	1950-11-15	3	0	102.0		IDN
 238	United States of America	Government of United States of America	Puerto Rican Nationalist Party	1	0	1	1950-10-30	1950-11-01	5	0	2.0		USA
-239	Egypt,United Kingdom	Government of Egypt	Government of United Kingdom	1	0	2	1951-10-18	1952-12-31	1, 2	0	440.0		EGY,GBR
+239	United Kingdom,Egypt	Government of Egypt	Government of United Kingdom	1	0	2	1951-10-18	1952-12-31	1, 2	0	440.0		GBR,EGY
 240	Thailand	Government of Thailand	CPT	2	1	3	1951-06-30	1982-12-31	3	0	11507.0		THA
 241	Kenya	Government of United Kingdom	Mau Mau	1	1	1	1952-10-22	1956-12-31	4	0	1531.0		KEN
 242	Cuba	Government of Cuba	Cuban Revolutionary Council	2	1	4	1953-07-26	1961-04-20	5	0	2825.0		CUB
@@ -49,12 +49,12 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 247	Argentina	Government of Argentina	ERP, Montoneros	2	1	3	1955-06-16	1977-12-31	5	0	8234.0		ARG
 248	Cyprus	Government of United Kingdom	EOKA	1	0	1	1955-06-02	1959-02-19	1	0	1358.0		CYP
 249	Vietnam	Government of South Vietnam	FNL	1	1	4	1955-04-30	1964-12-31	3	0	3533.0		VNM
-250	Russia,Hungary	Government of Hungary	Government of Russia (Soviet Union)	2	1	2	1956-10-23	1956-11-14	1	0	22.0		RUS,HUN
+250	Hungary,Russia	Government of Hungary	Government of Russia (Soviet Union)	2	1	2	1956-10-23	1956-11-14	1	0	22.0		HUN,RUS
 251	India	Government of India	NSCN-IM	1	1	3	1955-07-20	2000-09-13	3	0	16492.0	489.0	IND
-252	Egypt,United Kingdom,France,Israel	Government of France, Government of Israel, Government of United Kingdom	Government of Egypt	1	1	2	1956-10-31	1956-11-06	2	0	6.0		EGY,GBR,FRA,ISR
+252	France,United Kingdom,Egypt,Israel	Government of France, Government of Israel, Government of United Kingdom	Government of Egypt	1	1	2	1956-10-31	1956-11-06	2	0	6.0		FRA,GBR,EGY,ISR
 253	Myanmar	Government of Myanmar (Burma)	KNPP	1	0	3	1957-12-31	2005-01-25	3	0	17192.0	717.0	MMR
 254	Cameroon	Government of France	UPC	1	0	1	1957-09-30	1959-12-31	4	0	822.0		CMR
-255	Nicaragua,Honduras	Government of Honduras	Government of Nicaragua	1	0	2	1957-05-01	1957-05-07	5	0	6.0		NIC,HND
+255	Honduras,Nicaragua	Government of Honduras	Government of Nicaragua	1	0	2	1957-05-01	1957-05-07	5	0	6.0		HND,NIC
 256	Morocco,Mauritania	Government of France	NLA	1	0	1	1957-01-12	1958-06-30	4	0	534.0		MAR,MRT
 257	Morocco,Mauritania	Government of Spain	NLA	1	0	1	1957-11-23	1958-06-30	4	0	219.0		MAR,MRT
 258	Oman	Government of Oman	State of Oman/Free Oman	1	0	4	1957-07-31	1957-08-26	2	0	26.0		OMN
@@ -68,21 +68,21 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 266	Democratic Republic of the Congo	Government of DR Congo (Zaire)	Independent Mining State of South Kasai	1	0	3	1960-08-31	1962-12-31	4	0	852.0		COD
 267	Ethiopia	Government of Ethiopia	EPRDF, Military faction (Harar garrison)	2	1	3	1960-12-17	1991-06-02	4	0	11124.0	41908.0	ETH
 268	Somalia,Ethiopia	Government of Ethiopia	Government of Somalia	1	1	2	1964-02-10	1980-12-03	4	0	6141.0		SOM,ETH
-269	Nepal	Government of Nepal	CPN-M	2	1	3	1960-02-29	2006-09-21	3	1	17006.0	9925.0	NPL
+269	Nepal	Government of Nepal	CPN-M	2	1	3	1960-02-29	2006-09-21	3	0	17006.0	9925.0	NPL
 270	France	Government of France	OAS	2	1	3	1961-04-22	1962-06-30	1	0	434.0		FRA
 271	Iraq	Government of Iraq	PUK	1	1	3	1961-12-31	1996-09-30	2	0	12692.0	2036.0	IRQ
-272	Tunisia,France	Government of France	Government of Tunisia	1	1	2	1961-07-20	1961-07-22	1, 4	0	2.0		TUN,FRA
+272	France,Tunisia	Government of France	Government of Tunisia	1	1	2	1961-07-20	1961-07-22	1, 4	0	2.0		FRA,TUN
 273	Brunei	Government of United Kingdom	North Kalimantan Liberation Army	1	0	1	1962-12-08	1962-12-31	3	0	23.0		BRN
 274	China,India	Government of China	Government of India	1	1	2	1959-08-31	1967-12-31	3	0	3044.0		CHN,IND
 275	Ethiopia	Government of Ethiopia	EPLF	1	1	3	1961-09-30	1991-05-31	4	0	10835.0	43470.0	ETH
-276	Indonesia,Netherlands	Government of Indonesia	Government of Netherlands	1	0	2	1962-01-15	1962-09-21	1, 3	0	249.0		IDN,NLD
+276	Netherlands,Indonesia	Government of Indonesia	Government of Netherlands	1	0	2	1962-01-15	1962-09-21	1, 3	0	249.0		NLD,IDN
 277	Venezuela	Government of Venezuela	Military faction (forces of Hugo Chávez) 	2	0	3	1962-06-03	1992-11-27	5	0	11135.0	144.0	VEN
-278	Morocco,Algeria	Government of Algeria	Government of Morocco	1	0	2	1963-10-08	1963-11-04	4	0	27.0		MAR,DZA
+278	Algeria,Morocco	Government of Algeria	Government of Morocco	1	0	2	1963-10-08	1963-11-04	4	0	27.0		DZA,MAR
 279	Guinea Bissau	Government of Portugal	PAIGC	1	1	1	1963-02-28	1973-12-31	4	0	3959.0		GNB
 280	Malaysia	Government of Malaysia	CCO	1	0	4	1963-12-31	1966-12-31	3	0	1096.0		MYS
-281	Indonesia,Malaysia	Government of Indonesia	Government of Malaysia	1	0	2	1962-12-08	1966-08-11	3	0	1342.0		IDN,MYS
+281	Malaysia,Indonesia	Government of Indonesia	Government of Malaysia	1	0	2	1962-12-08	1966-08-11	3	0	1342.0		MYS,IDN
 282	Sudan	Government of Sudan	SSLM	1	1	3	1963-12-31	1972-01-31	4	1	2953.0		SDN
-283	Democratic Republic of the Congo	Government of DR Congo (Zaire)	APCLS, PARC-FAAL	2	1	3	1964-01-18	2014-09-05	4	0	18493.0	17253.0	COD
+283	Democratic Republic of the Congo	Government of DR Congo (Zaire)	APCLS, PARC-FAAL	2	1	3	1964-01-18	2014-09-05	4	1	18493.0	17253.0	COD
 284	Gabon	Government of Gabon	Military faction (forces loyal to Léon M'Ba)	2	0	4	1964-02-18	1964-02-19	4	0	1.0		GAB
 285	Mozambique	Government of Portugal	Frelimo	1	1	1	1964-11-19	1974-09-07	4	0	3579.0		MOZ
 286	Yemen	Government of United Kingdom	FLOSY	1	0	1	1964-11-25	1967-11-29	2	0	1099.0		YEM
@@ -93,15 +93,15 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 291	Indonesia	Government of Indonesia	OPM	1	1	3	1965-07-28	1984-12-31	3	0	7096.0		IDN
 292	Peru	Government of Peru	Sendero Luminoso	2	1	3	1963-05-15	2010-12-30	5	0	17396.0	6781.0	PER
 293	Vietnam	Government of South Vietnam	Government of Vietnam (North Vietnam)	1	1	2	1965-12-31	1975-04-30	3	0	3407.0		VNM
-294	Thailand,Cambodia	Government of Cambodia (Kampuchea)	Government of Thailand	1	0	2	1975-12-15	2011-05-02	3	0	12922.0	52.0	THA,KHM
+294	Cambodia,Thailand	Government of Cambodia (Kampuchea)	Government of Thailand	1	0	2	1975-12-15	2011-05-02	3	0	12922.0	52.0	KHM,THA
 295	Ghana	Government of Ghana	Military faction (forces of Ekow Dennis and Edward Adjei-Ampofo) 	2	0	3	1966-02-24	1983-06-19	4	0	6324.0		GHA
 296	India	Government of India	MNF	1	0	3	1966-09-01	1968-12-31	3	0	852.0		IND
 297	Nigeria	Government of Nigeria	Jama'atu Ahlis Sunna Lidda'awati wal-Jihad	2	1	4	1966-01-15	2009-07-30	4	0	15902.0	10811.0	NGA
-298	South Africa	Government of South Africa	SWAPO	1	1	3	1966-08-26	1988-08-08	4	1	8018.0		ZAF
+298	South Africa	Government of South Africa	SWAPO	1	1	3	1966-08-26	1988-08-08	4	0	8018.0		ZAF
 299	Syria	Government of Syria	Syrian insurgents	2	1	4	1966-02-23	2016-12-31	2	0	18574.0	17.0	SYR
 300	Cambodia	Government of Cambodia (Kampuchea)	KR	2	1	3	1967-04-30	1998-10-03	3	1	11479.0	4323.0	KHM
-301	Jordan,Israel	Government of Israel	Government of Jordan	1	1	2	1967-06-05	1967-06-10	2	0	5.0		JOR,ISR
-302	Syria,Israel	Government of Israel	Government of Syria	1	1	2	1967-06-05	1973-10-24	2	0	2333.0		SYR,ISR
+301	Israel,Jordan	Government of Israel	Government of Jordan	1	1	2	1967-06-05	1967-06-10	2	0	5.0		ISR,JOR
+302	Israel,Syria	Government of Israel	Government of Syria	1	1	2	1967-06-05	1973-10-24	2	0	2333.0		ISR,SYR
 303	Nigeria	Government of Nigeria	Republic of Biafra	1	1	3	1967-07-06	1970-01-12	4	0	921.0		NGA
 304	Myanmar,China	Government of China	Government of Myanmar (Burma)	1	0	2	1969-02-28	1969-12-31	3	0	306.0		MMR,CHN
 305	Russia,China	Government of China	Government of Russia (Soviet Union)	1	0	2	1969-03-02	1969-12-31	1, 3	0	304.0		RUS,CHN
@@ -122,18 +122,18 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 320	Yemen	Government of South Yemen	Government of Yemen (North Yemen)	3	0	2	1972-02-21	1979-03-30	2	1	2594.0		YEM
 321	Chile	Government of Chile	Military faction (forces of Augusto Pinochet, Toribio Merino and Leigh Guzman) 	2	0	3	1973-09-11	1973-09-11	5	0	0.0		CHL
 322	Bangladesh	Government of Bangladesh	JSS/SB	1	1	3	1975-02-28	1991-12-31	3	1	6150.0	140.0	BGD
-323	Cyprus,Turkey	Government of Cyprus	Government of Turkey	1	1	2	1974-06-20	1974-08-16	1, 2	0	57.0		CYP,TUR
+323	Turkey,Cyprus	Government of Cyprus	Government of Turkey	1	1	2	1974-06-20	1974-08-16	1, 2	0	57.0		TUR,CYP
 324	Iran,Iraq	Government of Iran	Government of Iraq	3	1	2	1972-04-11	1988-08-20	2	1	5975.0		IRN,IRQ
 325	Pakistan	Government of Pakistan	BLA, UBA	1	1	3	1973-05-18	2016-10-23	3	0	15864.0	1196.0	PAK
 326	Eritrea	Government of Eritrea	EIJM - AS	2	0	3	1993-12-16	2003-08-09	4	0	3523.0	148.0	ERI
 327	Angola	Government of Angola	UNITA	2	1	4	1975-11-11	2002-04-01	4	1	9638.0	30222.0	AGO
-328	Vietnam,Cambodia	Government of Cambodia (Kampuchea)	Government of Vietnam (North Vietnam)	1	0	2	1975-05-01	1977-12-31	3	0	975.0		VNM,KHM
+328	Cambodia,Vietnam	Government of Cambodia (Kampuchea)	Government of Vietnam (North Vietnam)	1	0	2	1975-05-01	1977-12-31	3	0	975.0		KHM,VNM
 329	Ethiopia	Government of Ethiopia	ONLF	1	1	3	1964-01-11	2016-12-31	4	0	19348.0	1479.0	ETH
 330	Indonesia	Government of Indonesia	Fretilin	1	1	3	1975-12-07	1999-09-22	3	0	8690.0	201.0	IDN
 331	Morocco	Government of Morocco	POLISARIO	1	1	3	1975-09-01	1989-11-16	4	0	5190.0	226.0	MAR
 332	Mozambique	Government of Mozambique	Renamo	2	1	3	1977-12-31	2016-10-30	4	1	14183.0	4450.0	MOZ
 333	Afghanistan	Government of Afghanistan	Taleban	2	1	4	1975-12-31		3	1	0.0	162045.0	AFG
-334	Vietnam,China	Government of China	Government of Vietnam (North Vietnam)	1	1	2	1974-01-19	1988-12-31	3	0	5460.0		VNM,CHN
+334	China,Vietnam	Government of China	Government of Vietnam (North Vietnam)	1	1	2	1974-01-19	1988-12-31	3	0	5460.0		CHN,VNM
 335	India	Government of India	NLFT-B	1	0	3	1979-07-09	2004-12-28	3	1	9304.0	600.0	IND
 336	Nicaragua	Government of Nicaragua	Contras/FDN	2	1	3	1974-12-27	1990-04-15	5	0	5588.0	565.0	NIC
 337	Somalia	Government of Somalia	Al-Shabaab	2	1	4	1982-01-18	2002-10-28	4	1	7588.0	30173.0	SOM
@@ -148,19 +148,19 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 346	Argentina,United Kingdom	Government of Argentina	Government of United Kingdom	1	0	2	1982-04-02	1982-06-14	1, 5	0	73.0		ARG,GBR
 347	India	Government of India	KCP, PREPAK, UNLF	1	1	3	1979-04-26	2009-12-28	3	0	11204.0	976.0	IND
 348	Kenya	Government of Kenya	Military faction (forces of Hezekiah Ochuka)	2	0	3	1982-08-01	1982-08-21	4	0	20.0		KEN
-349	Nigeria,Chad	Government of Chad	Government of Nigeria	1	0	2	1983-04-18	1983-11-01	4	1	197.0		NGA,TCD
-350	Spain,United States of America	Government of Grenada	Government of United States of America	2	0	2	1983-10-25	1983-10-27	5	0	2.0		ESP,USA
+349	Chad,Nigeria	Government of Chad	Government of Nigeria	1	0	2	1983-04-18	1983-11-01	4	1	197.0		TCD,NGA
+350	United States of America,Spain	Government of Grenada	Government of United States of America	2	0	2	1983-10-25	1983-10-27	5	0	2.0		USA,ESP
 351	India	Government of India	Sikh insurgents	1	1	3	1981-09-20	1993-12-24	3	0	4478.0	8182.0	IND
 352	Sri Lanka	Government of Sri Lanka	LTTE	1	1	3	1975-07-27	2009-07-04	3	0	12396.0	60816.0	LKA
 353	Cameroon	Government of Cameroon	Jama'atu Ahlis Sunna Lidda'awati wal-Jihad	2	1	3	1960-01-31	2016-11-24	4	0	20752.0	744.0	CMR
 354	Turkey	Government of Turkey	PKK	1	1	3	1983-05-01	2016-12-28	2	0	12295.0	28370.0	TUR
-355	Burkina Faso,Mali	Government of Burkina Faso	Government of Mali	1	0	2	1985-12-25	1985-12-31	4	0	6.0		BFA,MLI
-356	Thailand,Laos	Government of Laos	Government of Thailand	1	0	2	1982-06-16	1988-02-17	3	0	2072.0		THA,LAO
+355	Mali,Burkina Faso	Government of Burkina Faso	Government of Mali	1	0	2	1985-12-25	1985-12-31	4	0	6.0		MLI,BFA
+356	Laos,Thailand	Government of Laos	Government of Thailand	1	0	2	1982-06-16	1988-02-17	3	0	2072.0		LAO,THA
 357	Suriname	Government of Suriname	SLA	2	0	3	1986-08-21	1987-12-31	5	0	497.0		SUR
 358	Togo	Government of Togo	MTD	2	0	3	1986-09-23	1986-09-24	4	0	1.0		TGO
 359	Yemen	Government of South Yemen	Yemenite Socialist Party - Abdul Fattah Ismail faction	2	1	3	1986-01-13	1986-01-20	2	0	7.0		YEM
 360	Burkina Faso	Government of Burkina Faso	Popular Front	2	0	3	1987-10-15	1987-10-15	4	0	0.0		BFA
-361	Libya,Chad	Government of Chad	Government of Libya	1	1	2	1987-08-08	1987-09-12	4	1	35.0		LBY,TCD
+361	Chad,Libya	Government of Chad	Government of Libya	1	1	2	1987-08-08	1987-09-12	4	1	35.0		TCD,LBY
 362	Madagascar	Government of Comoros	Presidential guard	2	0	3	1989-11-27	1989-11-29	4	0	2.0	29.0	MDG
 363	Ethiopia	Government of Ethiopia	ARDUF	1	0	3	1975-06-30	1996-12-31	4	0	7855.0	25.0	ETH
 364	India	Government of India	Kashmir insurgents	1	1	3	1984-02-06	2016-12-17	3	0	12003.0	17350.0	IND
@@ -204,7 +204,7 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 402	Yemen	Government of Yemen (North Yemen)	Democratic Republic of Yemen	1	1	3	1994-02-21	1994-07-04	2	0	133.0	1489.0	YEM
 403	Peru,Ecuador	Government of Ecuador	Government of Peru	1	0	2	1995-01-26	1995-12-31	5	1	339.0	99.0	PER,ECU
 404	Pakistan	Government of Pakistan	TTP	2	1	4	1990-02-11	2016-12-10	3	0	9799.0	28126.0	PAK
-405	Nigeria,Cameroon	Government of Cameroon	Government of Nigeria	1	0	2	1994-02-18	1996-05-07	4	1	809.0	70.0	NGA,CMR
+405	Cameroon,Nigeria	Government of Cameroon	Government of Nigeria	1	0	2	1994-02-18	1996-05-07	4	1	809.0	70.0	CMR,NGA
 406	Niger	Government of Niger	FDR	1	0	3	1995-03-23	1995-07-10	4	0	109.0	52.0	NER
 407	Madagascar	Government of Comoros	MPA/Republic of Anjouan	1	0	3	1997-09-03	1997-09-05	4	1	2.0	56.0	MDG
 408	Republic of the Congo	Government of Congo	Ntsiloulous	2	1	3	1993-11-03	2016-12-10	4	1	8438.0	14283.0	COG
@@ -219,7 +219,7 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 417	Macedonia	Government of Macedonia, FYR	UCK	2	0	3	2000-01-11	2001-08-17	1	1	584.0	75.0	MKD
 418	United States of America	Government of United States of America	al-Qaida 	2	1	4	2001-09-11	2016-11-02	5	0	5531.0	5135.0	USA
 419	Ivory Coast	Government of Ivory Coast	FDSI-CI	2	0	3	2002-09-19	2011-04-27	4	1	3142.0	882.0	CIV
-420	Iraq,United States of America,United Kingdom,Australia	Government of Australia, Government of United Kingdom, Government of United States of America	Government of Iraq	2	1	2	2003-03-20	2003-04-28	1, 2, 3, 5	0	39.0	7927.0	IRQ,USA,GBR,AUS
+420	United Kingdom,Australia,Iraq,United States of America	Government of Australia, Government of United Kingdom, Government of United States of America	Government of Iraq	2	1	2	2003-03-20	2003-04-28	1, 2, 3, 5	0	39.0	7927.0	GBR,AUS,IRQ,USA
 421	India	Government of India	NDFB-S	1	0	3	1989-02-16	2014-12-31	3	1	9449.0	835.0	IND
 422	Myanmar	Government of Myanmar (Burma)	UWSA	1	0	3	1997-03-16	1997-07-15	3	0	121.0	155.0	MMR
 423	Thailand	Government of Thailand	Patani insurgents	1	1	3	1965-12-31	2016-12-26	3	0	18623.0	1780.0	THA
@@ -230,10 +230,10 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 428	Mauritania	Government of Mauritania	POLISARIO	1	1	3	1975-12-10	1978-12-31	4	1	1117.0		MRT
 429	Democratic Republic of the Congo	Government of DR Congo (Zaire)	BDK	1	0	3	1998-07-02	2008-03-31	4	0	3560.0	388.0	COD
 430	Niger	Government of Niger	MNJ	2	0	3	1991-10-25	2008-11-16	4	0	6232.0	268.0	NER
-431	Russia,Afghanistan	Government of Afghanistan	Government of Russia (Soviet Union)	2	0	2	1979-12-27	1979-12-28	1, 3	0	1.0		RUS,AFG
+431	Afghanistan,Russia	Government of Afghanistan	Government of Russia (Soviet Union)	2	0	2	1979-12-27	1979-12-28	1, 3	0	1.0		AFG,RUS
 432	Russia	Government of Russia (Soviet Union)	Forces of the Caucasus Emirate	1	1	3	2007-10-07	2015-10-21	1	0	2936.0	2946.0	RUS
 434	India	Government of India	PULF	1	0	3	2000-06-20	2008-12-22	3	0	3107.0	61.0	IND
-435	Eritrea,Djibouti	Government of Djibouti	Government of Eritrea	1	0	2	2008-06-10	2008-06-11	4	1	1.0	35.0	ERI,DJI
+435	Djibouti,Eritrea	Government of Djibouti	Government of Eritrea	1	0	2	2008-06-10	2008-06-11	4	1	1.0	35.0	DJI,ERI
 436	Ethiopia	Government of Ethiopia	SALF	1	0	4	1977-12-31	1980-12-31	4	0	1096.0		ETH
 437	Ethiopia	Government of Ethiopia	SLM	1	0	3	1982-12-31	1983-12-31	4	0	365.0		ETH
 438	India	Government of India	KNF	1	0	3	1993-10-12	1997-12-05	3	0	1515.0	96.0	IND
@@ -241,8 +241,8 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 440	Myanmar	Government of Myanmar (Burma)	LNUP	1	0	3	1973-01-11	1982-12-31	3	0	3641.0		MMR
 442	Mauritania	Government of Mauritania	AQIM	2	0	3	2008-09-15	2011-10-20	4	0	1130.0	68.0	MRT
 11342	India	Government of India	GNLA	1	0	3	2010-06-27	2014-11-27	3	0	1614.0	117.0	IND
-11343	Egypt,Israel	Government of Egypt	Government of Israel	1	1	2	1967-06-05	1973-10-24	2	0	2333.0		EGY,ISR
-11344	Sudan	Government of Sudan	Republic of South Sudan	1	0	3	2011-05-01	2011-06-15	4	0	45.0	145.0	SDN
+11343	Israel,Egypt	Government of Egypt	Government of Israel	1	1	2	1967-06-05	1973-10-24	2	0	2333.0		ISR,EGY
+11344	Sudan	Government of Sudan	Republic of South Sudan	1	0	3	2011-05-01	2011-06-15	4	1	45.0	145.0	SDN
 11345	South Sudan	Government of South Sudan	SPLM/A In Opposition	2	1	3	2011-08-20	2016-11-19	4	0	1918.0	4149.0	SSD
 11346	Libya	Government of Libya	Forces of the House of Representatives	2	1	3	2011-02-28	2015-04-19	4	0	1511.0	2414.0	LBY
 11347	Mali	Government of Mali	Ansar Dine, AQIM	2	1	4	2009-06-14	2009-07-16	4	0	32.0	1286.0	MLI
@@ -257,7 +257,7 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 13219	Ukraine	Government of Ukraine	Maidan	2	0	3	2014-01-22	2014-02-21	1	0	30.0	88.0	UKR
 13246	Ukraine	Government of Ukraine	DPR	1	1	4	2014-04-12	2014-09-16	1	0	157.0	1996.0	UKR
 13247	Ukraine	Government of Ukraine	LPR	1	0	4	2014-05-04	2014-08-26	1	0	114.0	712.0	UKR
-13306	Ukraine	Government of Ukraine	DPR, LPR	1	1	4	2014-09-17	2016-12-28	1	1	833.0	3117.0	UKR
+13306	Ukraine	Government of Ukraine	DPR, LPR	1	1	4	2014-09-17	2016-12-28	1	0	833.0	3117.0	UKR
 13349	Myanmar	Government of Myanmar (Burma)	PSLF	1	0	3	1994-05-02	2015-11-13	3	0	7865.0	176.0	MMR
 13588	Russia	Government of Russia (Soviet Union)	IS	1	0	3	2015-03-21	2016-12-18	1	0	638.0	121.0	RUS
 13604	Syria	Government of Syria	IS	1	1	4	2013-05-14	2016-12-31	2	0	1327.0		SYR
@@ -272,8 +272,8 @@ conflictid	location	sidea	sideb	incomp	cumint	type	startdate	enddate	region	agre
 13648	Egypt	Government of Egypt	IS	1	1	3	2014-11-16	2016-12-06	2	0	751.0	1042.0	EGY
 13653	India	Government of India	UNLFW	1	0	3	2015-04-19	2016-12-31	3	0	622.0	205.0	IND
 13675	Lebanon	Government of Lebanon	IS	1	0	3	2014-06-25	2015-12-15	2	0	538.0	219.0	LBN
-13692	Afghanistan,United States of America,United Kingdom	Government of Afghanistan	Government of United Kingdom, Government of United States of America	2	1	2	2001-10-07	2001-11-13	1, 3, 5	0	37.0	1397.0	AFG,USA,GBR
-13694	Libya	Government of Libya	IS	1	1	4	2015-03-14	2016-12-07	4	0	634.0	1796.0	LBY
+13692	Afghanistan,United Kingdom,United States of America	Government of Afghanistan	Government of United Kingdom, Government of United States of America	2	1	2	2001-10-07	2001-11-13	1, 3, 5	0	37.0	1397.0	AFG,GBR,USA
+13694	Libya	Government of Libya	IS	1	1	4	2015-03-14	2016-12-07	4	1	634.0	1796.0	LBY
 13721	Algeria	Government of Algeria	Jund al-Khilafah	1	0	3	2015-04-05	2015-05-20	4	0	45.0	33.0	DZA
 13809	Syria	Government of Syria	SDF	3	0	3	2015-12-06	2016-11-28	2	0	358.0		SYR
 13886	Jordan	Government of Jordan	IS	1	0	3	2016-03-02	2016-12-29	2	0	302.0	34.0	JOR

@@ -1,5 +1,7 @@
 <!--
 Todo-List
+
+TODO fix the way conflicts are displayed in the info panel: Some are displayed more than once
 TODO onclick country: filter the events and display only the events of this country
 TODO import and display peace treaties
 TODO possibility to display only PAs, hide conflicts
@@ -20,7 +22,7 @@ DONE Borders should be still visible when green/red contries
 
         body{
             background-color: grey;
-            font-family: "source_sans_proregular", sans-serif;
+            font-family: "Verdana", sans-serif;
             color: rgb(10, 10, 10);
         }
 
@@ -55,6 +57,7 @@ DONE Borders should be still visible when green/red contries
             padding: 5px;
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.3);
+            font-size: 13px;
         }
 
         #dateContainer{
@@ -68,6 +71,7 @@ DONE Borders should be still visible when green/red contries
             text-align:center;
             line-height: 50px;
             display:block;
+            font-size: 16px;
         }
 
         #month{
@@ -108,6 +112,7 @@ DONE Borders should be still visible when green/red contries
     let mapContainer = d3.select("#mapContainer");
     let countries;
     let conflicts = {};
+    let conflicts_by_id = {};
     let width = mapContainer.node().clientWidth;
     let height = mapContainer.node().clientHeight;
     let margin = 8;
@@ -135,6 +140,8 @@ DONE Borders should be still visible when green/red contries
             // push the data in the dict
             conflicts[loc_id].push({'start':startdate, 'end':enddate, 'country_name':d.location, 'conflict_id':d.conflictid, 'sidea':d.sidea, 'sideb':d.sideb});
         });
+
+        conflicts_by_id[d.conflictid] = {'location':d.location, 'sidea':d.sidea, 'sideb':d.sideb};
     })
     .get(function(err, rows) {
         if (err) return console.error(err);
@@ -201,18 +208,31 @@ DONE Borders should be still visible when green/red contries
     // ___________________________________________ INFO PANEL ___________________________________________
 
 
-    function updateInfoPanel(infocells){
-        let cells = d3.select('div#infoContainer').selectAll('.infocell').data(infocells, d => d);
-        cells.exit().remove();
+    function updateInfoPanel(conflicts){
+        let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflicts, cft_id => cft_id);
+        
+        cells.exit()
+            .style('opacity', 1)
+            .transition()
+            .style('opacity', 0)
+            .remove();
+        
         cells.enter()
             .append('div')
             .classed('infocell', true)
-            .html(d => conflictToString(d));
+            .html(d => conflictToString(d))
+            .style('opacity', 0)
+            .transition()
+            .style('opacity', 1);
+
+        //console.log("data size: " + conflicts.length)
+        //console.log("DOM size: " + cells.size())
     }
     
 
-    function conflictToString(c){
-        return "Location: " + c.country_name + "<br/>" + "Side A: " + c.sidea + "<br/>" + "Side B: " + c.sideb;
+    function conflictToString(c_id){
+        let c = conflicts_by_id[c_id];
+        return "ID: " + c_id + "<br/>Location: " + c.location + "<br/>" + "Side A:    " + c.sidea + "<br/>" + "Side B: " + c.sideb;
     }
 
 
@@ -284,7 +304,7 @@ DONE Borders should be still visible when green/red contries
             status = true;
             duration = msToDays(current_date - d3.min(ongoingConflits, c => c.start));
         }
-        return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits};
+        return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits.map(c => c.conflict_id)};
     }
 
     // returns the corresponding color (red for conflict, green for peace)

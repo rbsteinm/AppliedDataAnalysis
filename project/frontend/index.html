@@ -20,6 +20,8 @@ DONE Borders should be still visible when green/red contries
 
         body{
             background-color: grey;
+            font-family: "source_sans_proregular", sans-serif;
+            color: rgb(10, 10, 10);
         }
 
         #container{
@@ -72,6 +74,7 @@ DONE Borders should be still visible when green/red contries
             width: 30px;
             display: inline-block;
         }
+
         path {
             stroke: rgb(200, 200, 200);
             stroke-width: 0.5px;
@@ -95,6 +98,7 @@ DONE Borders should be still visible when green/red contries
 
     // ___________________________________________ GLOBAL VARIABLES ___________________________________________
 
+
     const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const PATH_TO_MAP = './data/countries.geo.json';
     const STEP_SIZE = 40; // represents the speed of the slider
@@ -107,14 +111,12 @@ DONE Borders should be still visible when green/red contries
     let width = mapContainer.node().clientWidth;
     let height = mapContainer.node().clientHeight;
     let margin = 8;
-    //let width = 960;
-    //let height = 700;
 
 
     // ___________________________________________ DOM ELEMENTS ___________________________________________
 
-    d3.select('#infoContainer').style('height', height-margin*2+'px');
 
+    d3.select('#infoContainer').style('height', height-margin*2+'px');
 
 
     // ___________________________________________ IMPORT DATA ___________________________________________
@@ -140,6 +142,7 @@ DONE Borders should be still visible when green/red contries
 
 
     // ___________________________________________ MAP DISPLAY ___________________________________________
+
 
     let svg = mapContainer.append('svg')
         .attr('width', width)
@@ -171,12 +174,32 @@ DONE Borders should be still visible when green/red contries
 
     // ___________________________________________ UPDATE MAP ___________________________________________
 
+
     svg.node().addEventListener("mousewheel", function(e){
         update(e.wheelDelta < 0)
     }, false);
 
 
-    // ___________________________________________ UPDATE INFO PANEL ___________________________________________
+    // This function is called at each mouseWheelEvent
+    // direction: true if scroll forward, false if backwards
+    function update(direction){
+        // update the current date
+        updateDate(direction);
+        // update the countries' colors
+        printDate(current_date);
+        let ongoingConflits = new Set();
+        Object.keys(conflicts).forEach(function(cid){
+            let status = getStatus(current_date, cid);
+            let color = getColor(status.status, status.duration);
+            mapLayer.select('path#'+cid).style('fill', color);
+            status.ongoingConflits.forEach(conflict => ongoingConflits.add(conflict));
+        });
+        updateInfoPanel(Array.from(ongoingConflits));
+    }
+
+
+    // ___________________________________________ INFO PANEL ___________________________________________
+
 
     function updateInfoPanel(infocells){
         let cells = d3.select('div#infoContainer').selectAll('.infocell').data(infocells, d => d);
@@ -193,8 +216,8 @@ DONE Borders should be still visible when green/red contries
     }
 
 
+    // ___________________________________________ DATE PANEL ___________________________________________
 
-    // ___________________________________________ HELPER METHODS ___________________________________________
 
     // prints the input date in the date container
     function printDate(date){
@@ -222,24 +245,7 @@ DONE Borders should be still visible when green/red contries
     }
 
 
-    // This function is called at each mouseWheelEvent
-    // direction: true if scroll forward, false if backwards
-    function update(direction){
-        // update the current date
-        updateDate(direction);
-        // update the countries' colors
-        printDate(current_date);
-        let ongoingConflits = new Set();
-        Object.keys(conflicts).forEach(function(cid){
-            let statusDuration = getStatusDuration(current_date, cid);
-            let color = getColor(statusDuration.status, statusDuration.duration);
-            mapLayer.select('path#'+cid).style('fill', color);
-            statusDuration.ongoingConflits.forEach(conflict => ongoingConflits.add(conflict));
-        });
-        //console.log(ongoingConflits);
-        updateInfoPanel(Array.from(ongoingConflits));
-
-    }
+    // ___________________________________________ HELPER METHODS ___________________________________________
 
 
     // returns true if there is at least one conflict in the country, false otherwise
@@ -255,13 +261,12 @@ DONE Borders should be still visible when green/red contries
 
     // This function returns the status of the country at the given date
     // and for how long this status has been lasting
+    // it also returns an array containing the ongoing conflicts
     // true: conflict, false: no conflict (i.e. peace)
     // country: country id
-    function getStatusDuration(current_date, country){
+    function getStatus(current_date, country){
         let ongoingConflits = conflicts[country].filter(c => (current_date > c.start && current_date < c.end));
         let status, duration;
-        //console.log(ongoingConflits);
-        //console.log('size: ' + ongoingConflits.length);
 
         // The country is at peace
         if(ongoingConflits.length == 0){
@@ -280,15 +285,6 @@ DONE Borders should be still visible when green/red contries
             duration = msToDays(current_date - d3.min(ongoingConflits, c => c.start));
         }
         return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits};
-    }
-
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
     }
 
     // returns the corresponding color (red for conflict, green for peace)

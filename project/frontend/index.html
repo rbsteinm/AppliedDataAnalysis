@@ -1,13 +1,13 @@
 <!--
 Todo-List
-TODO: scrollable div
 TODO onclick country: filter the events and display only the events of this country
-TODO possibility to display only PAs, hide conflicts
 TODO import and display peace treaties
+TODO possibility to display only PAs, hide conflicts
 TODO onclick -> display events of the clicked country
-TODO timeline on the bottom ?
 TODO color switch smooth transition
+TODO timeline on the bottom ?
 TODO extra: double click -> show induvidual events inside country
+DONE scrollable div
 DONE info pannel on the right
 DONE onmouseover -> display name popup
 DONE Borders should be still visible when green/red contries
@@ -45,6 +45,7 @@ DONE Borders should be still visible when green/red contries
             width: 24%;
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
         }
 
         .infocell{
@@ -183,15 +184,13 @@ DONE Borders should be still visible when green/red contries
         cells.enter()
             .append('div')
             .classed('infocell', true)
-            .text(d => d.conflict_id +  " " + d.sidea + " VS " + d.sideb);
+            .html(d => conflictToString(d));
     }
+    
 
-    // testing
-    let data = [];
-    for(let i = 0; i < 50; i++){
-        data.push('fewifhewrgihewrigherwiogherw');
+    function conflictToString(c){
+        return "Location: " + c.country_name + "<br/>" + "Side A: " + c.sidea + "<br/>" + "Side B: " + c.sideb;
     }
-    //updateInfoPanel(data);
 
 
 

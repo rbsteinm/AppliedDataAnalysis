@@ -120,6 +120,7 @@ Circles for PAs: deacreasing radius over time
     let width = mapContainer.node().clientWidth;
     let height = mapContainer.node().clientHeight;
     let margin = 8;
+    let selected_country_id = null;
 
 
     // ___________________________________________ DOM ELEMENTS ___________________________________________
@@ -157,7 +158,11 @@ Circles for PAs: deacreasing radius over time
 
     let svg = mapContainer.append('svg')
         .attr('width', width)
-        .attr('height', height);
+        .attr('height', height)
+        .on('click', function(d){
+            selected_country_id = null;
+            updateMapAndInfo();
+        });
 
     let mapLayer = svg.append('g');
 
@@ -179,6 +184,11 @@ Circles for PAs: deacreasing radius over time
             d3.select(this).style('stroke', 'rgb(200, 200, 200)');
             d3.select(this).style('stroke-width', 0.5);
         })
+        .on('click', function(d){
+            selected_country_id = d.id;
+            updateMapAndInfo();
+            d3.event.stopPropagation();
+        })
         .append('svg:title').text(function(d, i){return d.properties.name});
     });
 
@@ -187,23 +197,32 @@ Circles for PAs: deacreasing radius over time
 
 
     svg.node().addEventListener("mousewheel", function(e){
-        update(e.wheelDelta < 0)
+        onScrollEvent(e.wheelDelta < 0)
     }, false);
 
 
     // This function is called at each mouseWheelEvent
     // direction: true if scroll forward, false if backwards
-    function update(direction){
+    function onScrollEvent(direction){
         // update the current date
         updateDate(direction);
         // update the countries' colors
         printDate(current_date);
+        updateMapAndInfo();
+    }
+
+    // updates the respective color of each country on the map
+    // and the info panel on the right
+    function updateMapAndInfo(){
         let ongoingConflits = new Set();
-        Object.keys(conflicts).forEach(function(cid){
-            let status = getStatus(current_date, cid);
+        Object.keys(conflicts).forEach(function(loc_id){
+            let status = getStatus(current_date, loc_id);
             let color = getColor(status.status, status.duration);
-            mapLayer.select('path#'+cid).style('fill', color);
-            status.ongoingConflits.forEach(conflict => ongoingConflits.add(conflict));
+            // fill the country with the appropriate color
+            mapLayer.select('path#'+loc_id).style('fill', color);
+            if(selected_country_id == null || loc_id == selected_country_id){
+                status.ongoingConflits.forEach(conflict => ongoingConflits.add(conflict));
+            }
         });
         updateInfoPanel(Array.from(ongoingConflits));
     }
@@ -213,6 +232,7 @@ Circles for PAs: deacreasing radius over time
 
 
     function updateInfoPanel(conflict_ids){
+
         let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflict_ids, cft_id => cft_id);
         
         cells.exit()
@@ -228,9 +248,6 @@ Circles for PAs: deacreasing radius over time
             .style('opacity', 0)
             .transition()
             .style('opacity', 1);
-
-        //console.log("data size: " + conflict_ids.length)
-        //console.log("DOM size: " + cells.size())
     }
     
 
@@ -270,6 +287,11 @@ Circles for PAs: deacreasing radius over time
 
 
     // ___________________________________________ HELPER METHODS ___________________________________________
+
+    function updateSelectedCountryId(id){
+        selected_country_id = id;
+        console.log(selected_country_id);
+    }
 
 
     // returns true if there is at least one conflict in the country, false otherwise

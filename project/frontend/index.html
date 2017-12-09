@@ -75,6 +75,7 @@ Circles for PAs: deacreasing radius over time
             border-color: rgb(70, 70, 70);
             border-style: solid;
             border-width: 2px;
+            text-align: center;
         }
 
         #dateContainer{
@@ -279,8 +280,7 @@ Circles for PAs: deacreasing radius over time
     }
 
     function infoHeaderToString(locationName=null){
-        let location = selected_country_id ? locationName : '<i style="opacity:0.5;">Click on any country to select it</i>';
-        return "Filter on location: " + location;
+        return selected_country_id ? ("Filter on location: " + locationName) : ('<i style="opacity:0.5;">No filter. Click on any country to select it.</i>');
     }
 
     function updateInfoHeader(locationName=null){

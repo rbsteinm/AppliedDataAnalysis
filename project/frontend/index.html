@@ -1,12 +1,13 @@
 <!--
 Todo-List
 
-TODO onclick country: filter the events and display only the events of this country
+TODO add infocell header
 TODO import and display peace treaties
 TODO timeline on the bottom
 TODO color switch smooth transition
 TODO extra: double click -> show induvidual events inside country
 TODO extra: zoom
+DONE onclick country: filter the events and display only the events of this country
 DONE fix the way conflicts are displayed in the info panel: Some are displayed more than once
 DONE scrollable div
 DONE info pannel on the right
@@ -64,6 +65,18 @@ Circles for PAs: deacreasing radius over time
             font-size: 13px;
         }
 
+        #infocell-header{
+            margin: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.3);
+            font-size: 15px;
+            border-color: rgb(70, 70, 70);
+            border-style: solid;
+            border-width: 2px;
+        }
+
         #dateContainer{
             position: fixed;
             left: 8px;
@@ -114,8 +127,9 @@ Circles for PAs: deacreasing radius over time
     const END_DATE = new Date("2016-12-31");
     let current_date = START_DATE;
     let mapContainer = d3.select("#mapContainer");
+    let infoContainer = d3.select('#infoContainer');
     let countries;
-    let conflicts = {}; // all conflicts, sorted by country id
+    let conflicts = {}; // all conflicts, sorted by location id
     let conflicts_by_id = {}; // all conflicts, sorted by conflict id
     let width = mapContainer.node().clientWidth;
     let height = mapContainer.node().clientHeight;
@@ -126,7 +140,16 @@ Circles for PAs: deacreasing radius over time
     // ___________________________________________ DOM ELEMENTS ___________________________________________
 
 
-    d3.select('#infoContainer').style('height', height-margin*2+'px');
+    infoContainer.style('height', height-margin*2+'px');
+
+    // add infocell header
+    infoContainer
+        .append('div')
+        .attr('id', 'infocell-header')
+        .html(d => infoHeaderToString())
+        .style('opacity', 0)
+        .transition()
+        .style('opacity', 1);
 
 
     // ___________________________________________ IMPORT DATA ___________________________________________
@@ -143,10 +166,10 @@ Circles for PAs: deacreasing radius over time
             // create the dict entry if it does not exist yet
             if(!conflicts[loc_id]) conflicts[loc_id] = [];
             // push the data in the dict
-            conflicts[loc_id].push({'start':startdate, 'end':enddate, 'country_name':d.location, 'conflict_id':d.conflictid, 'sidea':d.sidea, 'sideb':d.sideb});
+            conflicts[loc_id].push({'start':startdate, 'end':enddate, 'locations':d.location, 'conflict_id':d.conflictid, 'sidea':d.sidea, 'sideb':d.sideb});
         });
 
-        conflicts_by_id[d.conflictid] = {'location':d.location, 'sidea':d.sidea, 'sideb':d.sideb};
+        conflicts_by_id[d.conflictid] = {'locations':d.location, 'sidea':d.sidea, 'sideb':d.sideb};
     })
     .get(function(err, rows) {
         if (err) return console.error(err);
@@ -162,6 +185,7 @@ Circles for PAs: deacreasing radius over time
         .on('click', function(d){
             selected_country_id = null;
             updateMapAndInfo();
+            updateInfoHeader();
         });
 
     let mapLayer = svg.append('g');
@@ -187,6 +211,7 @@ Circles for PAs: deacreasing radius over time
         .on('click', function(d){
             selected_country_id = d.id;
             updateMapAndInfo();
+            updateInfoHeader(d.properties.name);
             d3.event.stopPropagation();
         })
         .append('svg:title').text(function(d, i){return d.properties.name});
@@ -236,9 +261,6 @@ Circles for PAs: deacreasing radius over time
         let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflict_ids, cft_id => cft_id);
         
         cells.exit()
-            .style('opacity', 1)
-            .transition()
-            .style('opacity', 0)
             .remove();
         
         cells.enter()
@@ -253,7 +275,16 @@ Circles for PAs: deacreasing radius over time
 
     function conflictToString(c_id){
         let c = conflicts_by_id[c_id];
-        return "ID: " + c_id + "<br/>Location: " + c.location + "<br/>" + "Side A:    " + c.sidea + "<br/>" + "Side B: " + c.sideb;
+        return "ID: " + c_id + "<br/>Location: " + c.locations + "<br/>" + "Side A:    " + c.sidea + "<br/>" + "Side B: " + c.sideb;
+    }
+
+    function infoHeaderToString(locationName=null){
+        let location = selected_country_id ? locationName : '<i style="opacity:0.5;">Click on any country to select it</i>';
+        return "Filter on location: " + location;
+    }
+
+    function updateInfoHeader(locationName=null){
+        infoContainer.select('#infocell-header').html(infoHeaderToString(locationName));
     }
 
 
@@ -287,11 +318,6 @@ Circles for PAs: deacreasing radius over time
 
 
     // ___________________________________________ HELPER METHODS ___________________________________________
-
-    function updateSelectedCountryId(id){
-        selected_country_id = id;
-        console.log(selected_country_id);
-    }
 
 
     // returns true if there is at least one conflict in the country, false otherwise

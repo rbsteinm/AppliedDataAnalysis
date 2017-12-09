@@ -1,19 +1,18 @@
 <!--
 Todo-List
 
-TODO fix the way conflicts are displayed in the info panel: Some are displayed more than once
 TODO onclick country: filter the events and display only the events of this country
 TODO import and display peace treaties
-TODO possibility to display only PAs, hide conflicts
-TODO onclick -> display events of the clicked country
+TODO timeline on the bottom
 TODO color switch smooth transition
-TODO timeline on the bottom ?
 TODO extra: double click -> show induvidual events inside country
 TODO extra: zoom
+DONE fix the way conflicts are displayed in the info panel: Some are displayed more than once
 DONE scrollable div
 DONE info pannel on the right
 DONE onmouseover -> display name popup
 DONE Borders should be still visible when green/red contries
+WONTDO possibility to display only PAs, hide conflicts
 
 Ideas
 Put PAs in the conflict box and onclick expand and show infos about PA
@@ -116,8 +115,8 @@ Circles for PAs: deacreasing radius over time
     let current_date = START_DATE;
     let mapContainer = d3.select("#mapContainer");
     let countries;
-    let conflicts = {};
-    let conflicts_by_id = {};
+    let conflicts = {}; // all conflicts, sorted by country id
+    let conflicts_by_id = {}; // all conflicts, sorted by conflict id
     let width = mapContainer.node().clientWidth;
     let height = mapContainer.node().clientHeight;
     let margin = 8;
@@ -213,8 +212,8 @@ Circles for PAs: deacreasing radius over time
     // ___________________________________________ INFO PANEL ___________________________________________
 
 
-    function updateInfoPanel(conflicts){
-        let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflicts, cft_id => cft_id);
+    function updateInfoPanel(conflict_ids){
+        let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflict_ids, cft_id => cft_id);
         
         cells.exit()
             .style('opacity', 1)
@@ -230,7 +229,7 @@ Circles for PAs: deacreasing radius over time
             .transition()
             .style('opacity', 1);
 
-        //console.log("data size: " + conflicts.length)
+        //console.log("data size: " + conflict_ids.length)
         //console.log("DOM size: " + cells.size())
     }
     

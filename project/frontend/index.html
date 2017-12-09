@@ -1,12 +1,12 @@
 <!--
 Todo-List
 
-TODO add infocell header
 TODO import and display peace treaties
 TODO timeline on the bottom
 TODO color switch smooth transition
 TODO extra: double click -> show induvidual events inside country
 TODO extra: zoom
+DONE add infocell header
 DONE onclick country: filter the events and display only the events of this country
 DONE fix the way conflicts are displayed in the info panel: Some are displayed more than once
 DONE scrollable div
@@ -55,6 +55,7 @@ Circles for PAs: deacreasing radius over time
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.1);
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .infocell{
@@ -66,30 +67,47 @@ Circles for PAs: deacreasing radius over time
         }
 
         #infocell-header{
-            margin: 10px;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.3);
-            font-size: 15px;
-            border-color: rgb(70, 70, 70);
+            white-space:nowrap;
+            margin-top: 25px;
+            margin-bottom: 30px;
+            margin-left: 10px;
+        }
+
+        #filter-header{
             border-style: solid;
             border-width: 2px;
+            border-color: rgb(70, 70, 70);
+            border-radius: 10px;
             text-align: center;
+
+            padding: 10px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            
+            background-color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
         }
 
         #dateContainer{
-            position: fixed;
-            left: 8px;
-            top: 8px;
-            width: 7%;
-            height:50px;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
+            white-space:nowrap;
+            /*height:50px;*/
             text-align:center;
-            line-height: 50px;
-            display:block;
-            font-size: 16px;
+            /*line-height: 50px;*/
+            /*display: block;*/
+
+            background-color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+            border-radius: 10px;
+            border-color: rgb(70, 70, 70);
+            border-style: solid;
+            border-width: 2px;
+
+            margin-left: auto;
+            margin-right: 10px;
+            
+            padding: 10px;
+            padding-top: 15px;
+            padding-bottom: 15px;
         }
 
         #month{
@@ -107,12 +125,17 @@ Circles for PAs: deacreasing radius over time
 </head>
 <body>
     <div id='container'>
-        <div id='infoContainer'></div>
-        <div id='mapContainer'>
-            <div id='dateContainer'>
-                <span id='month'></span>
-                <span id='year'></span>
+        <div id='infoContainer'>
+            <div id='infocell-header'>
+                <span id='filter-header'></span>
+                <span id='dateContainer'>
+                    <span id='month'></span>
+                    <span id='year'></span>
+                </span>
             </div>
+        </div>
+        <div id='mapContainer'>
+            
         </div>
     </div>
 </body>
@@ -145,8 +168,7 @@ Circles for PAs: deacreasing radius over time
 
     // add infocell header
     infoContainer
-        .append('div')
-        .attr('id', 'infocell-header')
+    .select('#filter-header')
         .html(d => infoHeaderToString())
         .style('opacity', 0)
         .transition()
@@ -170,7 +192,7 @@ Circles for PAs: deacreasing radius over time
             conflicts[loc_id].push({'start':startdate, 'end':enddate, 'locations':d.location, 'conflict_id':d.conflictid, 'sidea':d.sidea, 'sideb':d.sideb});
         });
 
-        conflicts_by_id[d.conflictid] = {'locations':d.location, 'sidea':d.sidea, 'sideb':d.sideb};
+        conflicts_by_id[d.conflictid] = {'locations':d.location, 'sidea':d.sidea, 'sideb':d.sideb, 'start':startdate, 'end':enddate};
     })
     .get(function(err, rows) {
         if (err) return console.error(err);
@@ -276,20 +298,32 @@ Circles for PAs: deacreasing radius over time
 
     function conflictToString(c_id){
         let c = conflicts_by_id[c_id];
-        return "ID: " + c_id + "<br/>Location: " + c.locations + "<br/>" + "Side A:    " + c.sidea + "<br/>" + "Side B: " + c.sideb;
+        return "Location: " + c.locations + "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end) + "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
     }
 
     function infoHeaderToString(locationName=null){
-        return selected_country_id ? ("Filter on location: " + locationName) : ('<i style="opacity:0.5;">No filter. Click on any country to select it.</i>');
+        let res;
+        if(locationName){
+            let locName = locationName.length > 15 ? selected_country_id : locationName;
+            res = "Ongoing conflicts in <strong>" + locName + "</strong>";
+        }
+        else{
+            res = '<i style="opacity:0.5;">Click on any country to select it</i>';
+        }
+        return res;
     }
 
     function updateInfoHeader(locationName=null){
-        infoContainer.select('#infocell-header').html(infoHeaderToString(locationName));
+        infoContainer.select('#filter-header').html(infoHeaderToString(locationName));
     }
 
 
     // ___________________________________________ DATE PANEL ___________________________________________
 
+
+    function dateToString(date){
+        return MONTH_NAMES[date.getMonth()] + " " + date.getFullYear();
+    }
 
     // prints the input date in the date container
     function printDate(date){

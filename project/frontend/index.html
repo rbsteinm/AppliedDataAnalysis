@@ -241,16 +241,11 @@ solution 3:
             // store an array of its PAIDs in each conflict
             if(!conflicts_by_id[row.CID]['PAIDs']) conflicts_by_id[row.CID]['PAIDs'] = [];
             conflicts_by_id[row.CID]['PAIDs'].push(row.PAID);
-            console.log(conflicts_by_id[row.CID]);
 
         })
         .get(function(err, rows) {
             if (err) return console.error(err);
         });
-
-    console.log(conflicts_by_id);
-    console.log(agreements_by_id);
-    console.log(agreements_by_loc);
 
 
     // ___________________________________________ MAP DISPLAY ___________________________________________
@@ -318,7 +313,7 @@ solution 3:
     function updateMapAndInfo(){
         let ongoingConflits = new Set();
         Object.keys(conflicts).forEach(function(loc_id){
-            let status = getStatus(current_date, loc_id);
+            let status = getConflictStatus(current_date, loc_id);
             let color = getColor(status.status, status.duration);
             // fill the country with the appropriate color
             mapLayer.select('path#'+loc_id).style('fill', color);
@@ -424,7 +419,7 @@ solution 3:
     // it also returns an array containing the ongoing conflicts
     // true: conflict, false: no conflict (i.e. peace)
     // country: country id
-    function getStatus(current_date, country){
+    function getConflictStatus(current_date, country){
         let ongoingConflits = conflicts[country].filter(c => (current_date > c.start && current_date < c.end));
         let status, duration;
 
@@ -445,6 +440,10 @@ solution 3:
             duration = msToDays(current_date - d3.min(ongoingConflits, c => c.start));
         }
         return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits.map(c => c.conflict_id)};
+    }
+
+    function getAgreementsStatus(current_date, country_id){
+        let pas = agreements_by_loc[country_id].filter(pa => pa.start >= current_date);
     }
 
     // returns the corresponding color (red for conflict, green for peace)

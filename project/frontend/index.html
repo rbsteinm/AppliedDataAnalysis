@@ -20,10 +20,26 @@ Put PAs in the conflict box and onclick expand and show infos about PA
 Circles for PAs: deacreasing radius over time
 path animation on selected country
 
+________________________________________________________________
 
 PAs Data Structure
+
 PeaceAgreementsById: store all PAs in a dict (key: PAID or CID)
 PeaceAgreementsByCountry: store for each countryID the 
+
+
+solution 1:
+* store PAs by PAID
+* each conflict has a list of PAIDs
+* + easy to get PAs from conflicts (info pannel)
+* - to get by country: get country's CIDs, then for each CID get the PAIDs
+
+solution 2:
+* store PAs by PAID
+* for each region store a list of PAIDs 
+
+solution 3:
+* do both
 -->
 
 <!doctype html>
@@ -161,6 +177,8 @@ PeaceAgreementsByCountry: store for each countryID the
     let countries;
     let conflicts = {}; // all conflicts, sorted by location id
     let conflicts_by_id = {}; // all conflicts, sorted by conflict id
+    let agreements_by_loc = {};
+    let agreements_by_id = {};
     let width = mapContainer.node().clientWidth;
     let height = mapContainer.node().clientHeight;
     let margin = 8;
@@ -203,6 +221,36 @@ PeaceAgreementsByCountry: store for each countryID the
     .get(function(err, rows) {
         if (err) return console.error(err);
     });
+
+    // Peace Agreements data
+    d3.tsv("./data/peace_agreements.csv")
+        .row(function(row){
+            var startdatesplit = row.pa_date.split('-');
+            var startdate = new Date(parseInt(startdatesplit[0]), parseInt(startdatesplit[1])-1, parseInt(startdatesplit[2]));
+            var enddatesplit = row.enddate.split('-');
+            var enddate = new Date(parseInt(enddatesplit[0]), parseInt(enddatesplit[1])-1, parseInt(enddatesplit[2]));
+            // store PAs by PAIDs
+            agreements_by_id[row.PAID] = {'name':row.pa_name, 'start':row.pa_date, 'end':row.enddate, 'comment':row.pa_comment, 'end_comment':row.c_duration, 'link':row.link, 'locationID':row.locationID, 'cid':row.CID};
+            // store PAIDs by location
+            row.locationID.split(',').forEach(function(loc_id){
+                // create the dict entry if it does not exist yet
+                if(!agreements_by_loc[loc_id]) agreements_by_loc[loc_id] = [];
+                // push the data in the dict
+                agreements_by_loc[loc_id].push(row.PAID);
+            });
+            // store an array of its PAIDs in each conflict
+            if(!conflicts_by_id[row.CID]['PAIDs']) conflicts_by_id[row.CID]['PAIDs'] = [];
+            conflicts_by_id[row.CID]['PAIDs'].push(row.PAID);
+            console.log(conflicts_by_id[row.CID]);
+
+        })
+        .get(function(err, rows) {
+            if (err) return console.error(err);
+        });
+
+    console.log(conflicts_by_id);
+    console.log(agreements_by_id);
+    console.log(agreements_by_loc);
 
 
     // ___________________________________________ MAP DISPLAY ___________________________________________

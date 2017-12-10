@@ -19,6 +19,11 @@ Ideas
 Put PAs in the conflict box and onclick expand and show infos about PA
 Circles for PAs: deacreasing radius over time
 path animation on selected country
+
+
+PAs Data Structure
+PeaceAgreementsById: store all PAs in a dict (key: PAID or CID)
+PeaceAgreementsByCountry: store for each countryID the 
 -->
 
 <!doctype html>
@@ -178,7 +183,7 @@ path animation on selected country
 
     // ___________________________________________ IMPORT DATA ___________________________________________
 
-    // Loading the data
+    // Conflicts data
     d3.tsv("./data/conflicts.csv")
     .row(function(d) {
         var startdatesplit = d.startdate.split('-');

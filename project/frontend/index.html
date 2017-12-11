@@ -1,18 +1,45 @@
 <!--
 Todo-List
 
-TODO fix the way conflicts are displayed in the info panel: Some are displayed more than once
-TODO onclick country: filter the events and display only the events of this country
 TODO import and display peace treaties
-TODO possibility to display only PAs, hide conflicts
-TODO onclick -> display events of the clicked country
+TODO timeline on the bottom
 TODO color switch smooth transition
-TODO timeline on the bottom ?
 TODO extra: double click -> show induvidual events inside country
+TODO extra: zoom
+DONE add infocell header
+DONE onclick country: filter the events and display only the events of this country
+DONE fix the way conflicts are displayed in the info panel: Some are displayed more than once
 DONE scrollable div
 DONE info pannel on the right
 DONE onmouseover -> display name popup
 DONE Borders should be still visible when green/red contries
+WONTDO possibility to display only PAs, hide conflicts
+
+Ideas
+Put PAs in the conflict box and onclick expand and show infos about PA
+Circles for PAs: deacreasing radius over time
+path animation on selected country
+
+________________________________________________________________
+
+PAs Data Structure
+
+PeaceAgreementsById: store all PAs in a dict (key: PAID or CID)
+PeaceAgreementsByCountry: store for each countryID the 
+
+
+solution 1:
+* store PAs by PAID
+* each conflict has a list of PAIDs
+* + easy to get PAs from conflicts (info pannel)
+* - to get by country: get country's CIDs, then for each CID get the PAIDs
+
+solution 2:
+* store PAs by PAID
+* for each region store a list of PAIDs 
+
+solution 3:
+* do both
 -->
 
 <!doctype html>
@@ -50,6 +77,7 @@ DONE Borders should be still visible when green/red contries
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.1);
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .infocell{
@@ -60,18 +88,48 @@ DONE Borders should be still visible when green/red contries
             font-size: 13px;
         }
 
-        #dateContainer{
-            position: fixed;
-            left: 8px;
-            top: 8px;
-            width: 7%;
-            height:50px;
-            background-color: rgba(255, 255, 255, 0.5);
+        #infocell-header{
+            white-space:nowrap;
+            margin-top: 25px;
+            margin-bottom: 30px;
+            margin-left: 10px;
+        }
+
+        #filter-header{
+            border-style: solid;
+            border-width: 2px;
+            border-color: rgb(70, 70, 70);
             border-radius: 10px;
+            text-align: center;
+
+            padding: 10px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            
+            background-color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+        }
+
+        #dateContainer{
+            white-space:nowrap;
+            /*height:50px;*/
             text-align:center;
-            line-height: 50px;
-            display:block;
-            font-size: 16px;
+            /*line-height: 50px;*/
+            /*display: block;*/
+
+            background-color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+            border-radius: 10px;
+            border-color: rgb(70, 70, 70);
+            border-style: solid;
+            border-width: 2px;
+
+            margin-left: auto;
+            margin-right: 10px;
+            
+            padding: 10px;
+            padding-top: 15px;
+            padding-bottom: 15px;
         }
 
         #month{
@@ -84,17 +142,29 @@ DONE Borders should be still visible when green/red contries
             stroke-width: 0.5px;
         }
 
+        .circles{
+            stroke: blue;
+            fill: transparent; 
+            stroke-width: 2px;
+        }
+
     </style>
     <script src="https://d3js.org/d3.v4.min.js"> </script>
+    <script src="//d3js.org/topojson.v1.min.js"></script>
 </head>
 <body>
     <div id='container'>
-        <div id='infoContainer'></div>
-        <div id='mapContainer'>
-            <div id='dateContainer'>
-                <span id='month'></span>
-                <span id='year'></span>
+        <div id='infoContainer'>
+            <div id='infocell-header'>
+                <span id='filter-header'></span>
+                <span id='dateContainer'>
+                    <span id='month'></span>
+                    <span id='year'></span>
+                </span>
             </div>
+        </div>
+        <div id='mapContainer'>
+            
         </div>
     </div>
 </body>
@@ -106,27 +176,39 @@ DONE Borders should be still visible when green/red contries
     const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const PATH_TO_MAP = './data/countries.geo.json';
     const STEP_SIZE = 40; // represents the speed of the slider
-    const START_DATE = new Date("1945-01-01");
-    const END_DATE = new Date("2016-12-31");
+    const START_DATE = new Date("1975-01-01");
+    const END_DATE = new Date("2016-12-01");
     let current_date = START_DATE;
     let mapContainer = d3.select("#mapContainer");
+    let infoContainer = d3.select('#infoContainer');
     let countries;
-    let conflicts = {};
-    let conflicts_by_id = {};
+    let conflicts = {}; // all conflicts, sorted by location id
+    let conflicts_by_id = {}; // all conflicts, sorted by conflict id
+    let agreements_by_loc = {};
+    let agreements_by_id = {};
     let width = mapContainer.node().clientWidth;
     let height = mapContainer.node().clientHeight;
     let margin = 8;
+    let selected_country_id = null;
 
 
     // ___________________________________________ DOM ELEMENTS ___________________________________________
 
 
-    d3.select('#infoContainer').style('height', height-margin*2+'px');
+    infoContainer.style('height', height-margin*2+'px');
+
+    // add infocell header
+    infoContainer
+    .select('#filter-header')
+        .html(d => infoHeaderToString())
+        .style('opacity', 0)
+        .transition()
+        .style('opacity', 1);
 
 
     // ___________________________________________ IMPORT DATA ___________________________________________
 
-    // Loading the data
+    // Conflicts data
     d3.tsv("./data/conflicts.csv")
     .row(function(d) {
         var startdatesplit = d.startdate.split('-');
@@ -138,14 +220,39 @@ DONE Borders should be still visible when green/red contries
             // create the dict entry if it does not exist yet
             if(!conflicts[loc_id]) conflicts[loc_id] = [];
             // push the data in the dict
-            conflicts[loc_id].push({'start':startdate, 'end':enddate, 'country_name':d.location, 'conflict_id':d.conflictid, 'sidea':d.sidea, 'sideb':d.sideb});
+            conflicts[loc_id].push({'start':startdate, 'end':enddate, 'locations':d.location, 'conflict_id':d.conflictid, 'sidea':d.sidea, 'sideb':d.sideb});
         });
 
-        conflicts_by_id[d.conflictid] = {'location':d.location, 'sidea':d.sidea, 'sideb':d.sideb};
+        conflicts_by_id[d.conflictid] = {'locations':d.location, 'sidea':d.sidea, 'sideb':d.sideb, 'start':startdate, 'end':enddate};
     })
     .get(function(err, rows) {
         if (err) return console.error(err);
     });
+
+    // Peace Agreements data
+    d3.tsv("./data/peace_agreements.csv")
+        .row(function(row){
+            var startdatesplit = row.pa_date.split('-');
+            var startdate = new Date(parseInt(startdatesplit[0]), parseInt(startdatesplit[1])-1, parseInt(startdatesplit[2]));
+            var enddatesplit = row.enddate.split('-');
+            var enddate = new Date(parseInt(enddatesplit[0]), parseInt(enddatesplit[1])-1, parseInt(enddatesplit[2]));
+            // store PAs by PAIDs
+            agreements_by_id[row.PAID] = {'name':row.pa_name, 'start':startdate, 'end':enddate, 'comment':row.pa_comment, 'end_comment':row.c_duration, 'link':row.link, 'locationID':row.locationID, 'cid':row.CID};
+            // store PAIDs by location
+            row.locationID.split(',').forEach(function(loc_id){
+                // create the dict entry if it does not exist yet
+                if(!agreements_by_loc[loc_id]) agreements_by_loc[loc_id] = [];
+                // push the data in the dict
+                agreements_by_loc[loc_id].push(row.PAID);
+            });
+            // store an array of its PAIDs in each conflict
+            if(!conflicts_by_id[row.CID]['PAIDs']) conflicts_by_id[row.CID]['PAIDs'] = [];
+            conflicts_by_id[row.CID]['PAIDs'].push(row.PAID);
+
+        })
+        .get(function(err, rows) {
+            if (err) return console.error(err);
+        });
 
 
     // ___________________________________________ MAP DISPLAY ___________________________________________
@@ -153,19 +260,28 @@ DONE Borders should be still visible when green/red contries
 
     let svg = mapContainer.append('svg')
         .attr('width', width)
-        .attr('height', height);
+        .attr('height', height)
+        .on('click', function(d){
+            selected_country_id = null;
+            updateMapAndInfo();
+            updateInfoHeader();
+        });
 
     let mapLayer = svg.append('g');
 
     // projection of the world map
     var projection = d3.geoMercator().scale(width / 2 / Math.PI).translate([width/2, height/2+140]);
+
+    let path = d3.geoPath().projection(projection);
+
+    let centroids = {};
     
     d3.json(PATH_TO_MAP, function(err, geojson) {
 
         countries = mapLayer.selectAll("path")
         .data(geojson.features)
         .enter().append("path")
-        .attr("d", d3.geoPath().projection(projection))
+        .attr("d", path)
         .attr('id', country => country.id)
         .on('mouseover', function(d,i){
             d3.select(this).style('stroke', 'rgb(255, 255, 255)');
@@ -175,46 +291,102 @@ DONE Borders should be still visible when green/red contries
             d3.select(this).style('stroke', 'rgb(200, 200, 200)');
             d3.select(this).style('stroke-width', 0.5);
         })
+        .on('click', function(d){
+            selected_country_id = d.id;
+            updateMapAndInfo();
+            updateInfoHeader(d.properties.name);
+            d3.event.stopPropagation();
+        })
         .append('svg:title').text(function(d, i){return d.properties.name});
+
+        var features = geojson.features;
+        features.map(function(f){
+            return {'path':path.centroid(f), 'id':f.id};
+        }).forEach(c => centroids[c.id] = c.path);
     });
+
+    console.log(centroids);
+
 
 
     // ___________________________________________ UPDATE MAP ___________________________________________
 
 
     svg.node().addEventListener("mousewheel", function(e){
-        update(e.wheelDelta < 0)
+        onScrollEvent(e.wheelDelta < 0)
     }, false);
 
 
     // This function is called at each mouseWheelEvent
     // direction: true if scroll forward, false if backwards
-    function update(direction){
+    function onScrollEvent(direction){
         // update the current date
         updateDate(direction);
-        // update the countries' colors
         printDate(current_date);
+        // update the countries' colors
+        updateMapAndInfo();
+    }
+
+    // updates the respective color of each country on the map
+    // and the info panel on the right
+    function updateMapAndInfo(){
         let ongoingConflits = new Set();
-        Object.keys(conflicts).forEach(function(cid){
-            let status = getStatus(current_date, cid);
+        let locsWithPA = new Set();
+        Object.keys(conflicts).forEach(function(loc_id){
+            let status = getConflictStatus(current_date, loc_id);
             let color = getColor(status.status, status.duration);
-            mapLayer.select('path#'+cid).style('fill', color);
-            status.ongoingConflits.forEach(conflict => ongoingConflits.add(conflict));
-        });
+            // fill the country with the appropriate color
+            mapLayer.select('path#'+loc_id).style('fill', color);
+            // Fill the array of ongoing conflicts for the info pannel
+            if(selected_country_id == null || loc_id == selected_country_id){
+                status.ongoingConflits.forEach(conflict => ongoingConflits.add(conflict));
+            }
+            // Store each location that has at least one active PA
+            if(agreements_by_loc[loc_id]){
+                agreementStatus = getAgreementsStatus(current_date, loc_id);
+                if(agreementStatus.ongoingPA){
+                    locsWithPA.add(loc_id);
+                }
+
+            }
+        });   
         updateInfoPanel(Array.from(ongoingConflits));
+        updateCircles(locsWithPA);
     }
 
 
+    // draw a blue circle at the centroid of each location in the input array
+    // the array contains all the locations that have at least one active PA
+    // remove circles from other locations
+    function updateCircles(locsWithPA){
+        let circles = svg.selectAll('.circles').data(Array.from(locsWithPA), x => x);
+        circles.enter()
+            .append('circle')
+            .classed('circles', true)
+            .attr('cx', x => centroids[x][0])
+            .attr('cy', x => centroids[x][1])
+            //.attr('fill', 'blue')
+            .attr('id', x => 'circle_' + x)
+            .attr('r', 0)
+            .transition()
+            .attr('r', 6)
+            .transition()
+            .attr('r', 3);
+
+        circles.exit()
+            .attr('r', 3)
+            .transition()
+            .attr('r', 0)
+            .remove();
+    }
     // ___________________________________________ INFO PANEL ___________________________________________
 
 
-    function updateInfoPanel(conflicts){
-        let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflicts, cft_id => cft_id);
+    function updateInfoPanel(conflict_ids){
+
+        let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflict_ids, cft_id => cft_id);
         
         cells.exit()
-            .style('opacity', 1)
-            .transition()
-            .style('opacity', 0)
             .remove();
         
         cells.enter()
@@ -224,20 +396,37 @@ DONE Borders should be still visible when green/red contries
             .style('opacity', 0)
             .transition()
             .style('opacity', 1);
-
-        //console.log("data size: " + conflicts.length)
-        //console.log("DOM size: " + cells.size())
     }
     
 
     function conflictToString(c_id){
         let c = conflicts_by_id[c_id];
-        return "ID: " + c_id + "<br/>Location: " + c.location + "<br/>" + "Side A:    " + c.sidea + "<br/>" + "Side B: " + c.sideb;
+        return "Location: " + c.locations + "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end) + "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
+    }
+
+    function infoHeaderToString(locationName=null){
+        let res;
+        if(locationName){
+            let locName = locationName.length > 15 ? selected_country_id : locationName;
+            res = "Ongoing conflicts in <strong>" + locName + "</strong>";
+        }
+        else{
+            res = '<i style="opacity:0.5;">Click on any country to select it</i>';
+        }
+        return res;
+    }
+
+    function updateInfoHeader(locationName=null){
+        infoContainer.select('#filter-header').html(infoHeaderToString(locationName));
     }
 
 
     // ___________________________________________ DATE PANEL ___________________________________________
 
+
+    function dateToString(date){
+        return MONTH_NAMES[date.getMonth()] + " " + date.getFullYear();
+    }
 
     // prints the input date in the date container
     function printDate(date){
@@ -284,7 +473,7 @@ DONE Borders should be still visible when green/red contries
     // it also returns an array containing the ongoing conflicts
     // true: conflict, false: no conflict (i.e. peace)
     // country: country id
-    function getStatus(current_date, country){
+    function getConflictStatus(current_date, country){
         let ongoingConflits = conflicts[country].filter(c => (current_date > c.start && current_date < c.end));
         let status, duration;
 
@@ -305,6 +494,12 @@ DONE Borders should be still visible when green/red contries
             duration = msToDays(current_date - d3.min(ongoingConflits, c => c.start));
         }
         return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits.map(c => c.conflict_id)};
+    }
+
+    function getAgreementsStatus(current_date, country_id){
+        let ongoingPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
+        let brokenPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
+        return {'ongoingPA':(ongoingPas.length > 0), 'brokenPA':(brokenPas.length > 0), 'ongoingPas':ongoingPas, 'brokenPas':brokenPas};
     }
 
     // returns the corresponding color (red for conflict, green for peace)

@@ -88,6 +88,19 @@ solution 3:
             font-size: 13px;
         }
 
+        .cell_pa{
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            margin: 1px;
+            margin-bottom: 5px;
+            margin-top: 5px;
+            padding: 5px;
+            font-size:12px;
+            border-width: 1px;
+            border-color: rgb(0, 0, 255);
+            border-style: solid;
+        }
+
         #infocell-header{
             white-space:nowrap;
             margin-top: 25px;
@@ -305,8 +318,6 @@ solution 3:
         }).forEach(c => centroids[c.id] = c.path);
     });
 
-    console.log(centroids);
-
 
 
     // ___________________________________________ UPDATE MAP ___________________________________________
@@ -392,16 +403,46 @@ solution 3:
         cells.enter()
             .append('div')
             .classed('infocell', true)
-            .html(d => conflictToString(d))
+            .html(d => fillCellContent(d))
             .style('opacity', 0)
             .transition()
             .style('opacity', 1);
+
     }
-    
+
+    function getAgreementsFromConflicts(cid){
+        let pas = conflicts_by_id[cid].PAIDs;
+        if(!pas) return '';
+        let result;
+        if(pas.length == 0){
+            return '';
+        }
+        else{
+            result = 'test agreement';
+        }
+        console.log(cid + result)
+        return result;
+    }    
 
     function conflictToString(c_id){
         let c = conflicts_by_id[c_id];
-        return "Location: " + c.locations + "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end) + "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
+        return "ID: " + c_id + "<br/>Location: " + c.locations + "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end) + "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
+    }
+
+    function fillCellContent(cid){
+        let result = conflictToString(cid);
+
+        let paids = conflicts_by_id[cid].PAIDs;
+        if(!paids) return result;
+        paids.forEach(function(paid){
+            let pa = agreements_by_id[paid];
+            result += '<div class=cell_pa>';
+            result += "Name: " + pa.name;
+            result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end);
+            result += '</div>';
+        });
+
+        return result;
     }
 
     function infoHeaderToString(locationName=null){

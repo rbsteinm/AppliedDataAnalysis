@@ -142,8 +142,15 @@ solution 3:
             stroke-width: 0.5px;
         }
 
+        .circles{
+            stroke: blue;
+            fill: transparent; 
+            stroke-width: 2px;
+        }
+
     </style>
     <script src="https://d3js.org/d3.v4.min.js"> </script>
+    <script src="//d3js.org/topojson.v1.min.js"></script>
 </head>
 <body>
     <div id='container'>
@@ -169,8 +176,8 @@ solution 3:
     const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const PATH_TO_MAP = './data/countries.geo.json';
     const STEP_SIZE = 40; // represents the speed of the slider
-    const START_DATE = new Date("1945-01-01");
-    const END_DATE = new Date("2016-12-31");
+    const START_DATE = new Date("1975-01-01");
+    const END_DATE = new Date("2016-12-01");
     let current_date = START_DATE;
     let mapContainer = d3.select("#mapContainer");
     let infoContainer = d3.select('#infoContainer');
@@ -230,7 +237,7 @@ solution 3:
             var enddatesplit = row.enddate.split('-');
             var enddate = new Date(parseInt(enddatesplit[0]), parseInt(enddatesplit[1])-1, parseInt(enddatesplit[2]));
             // store PAs by PAIDs
-            agreements_by_id[row.PAID] = {'name':row.pa_name, 'start':row.pa_date, 'end':row.enddate, 'comment':row.pa_comment, 'end_comment':row.c_duration, 'link':row.link, 'locationID':row.locationID, 'cid':row.CID};
+            agreements_by_id[row.PAID] = {'name':row.pa_name, 'start':startdate, 'end':enddate, 'comment':row.pa_comment, 'end_comment':row.c_duration, 'link':row.link, 'locationID':row.locationID, 'cid':row.CID};
             // store PAIDs by location
             row.locationID.split(',').forEach(function(loc_id){
                 // create the dict entry if it does not exist yet
@@ -264,13 +271,17 @@ solution 3:
 
     // projection of the world map
     var projection = d3.geoMercator().scale(width / 2 / Math.PI).translate([width/2, height/2+140]);
+
+    let path = d3.geoPath().projection(projection);
+
+    let centroids = {};
     
     d3.json(PATH_TO_MAP, function(err, geojson) {
 
         countries = mapLayer.selectAll("path")
         .data(geojson.features)
         .enter().append("path")
-        .attr("d", d3.geoPath().projection(projection))
+        .attr("d", path)
         .attr('id', country => country.id)
         .on('mouseover', function(d,i){
             d3.select(this).style('stroke', 'rgb(255, 255, 255)');
@@ -287,7 +298,15 @@ solution 3:
             d3.event.stopPropagation();
         })
         .append('svg:title').text(function(d, i){return d.properties.name});
+
+        var features = geojson.features;
+        features.map(function(f){
+            return {'path':path.centroid(f), 'id':f.id};
+        }).forEach(c => centroids[c.id] = c.path);
     });
+
+    console.log(centroids);
+
 
 
     // ___________________________________________ UPDATE MAP ___________________________________________
@@ -303,8 +322,8 @@ solution 3:
     function onScrollEvent(direction){
         // update the current date
         updateDate(direction);
-        // update the countries' colors
         printDate(current_date);
+        // update the countries' colors
         updateMapAndInfo();
     }
 
@@ -312,19 +331,54 @@ solution 3:
     // and the info panel on the right
     function updateMapAndInfo(){
         let ongoingConflits = new Set();
+        let locsWithPA = new Set();
         Object.keys(conflicts).forEach(function(loc_id){
             let status = getConflictStatus(current_date, loc_id);
             let color = getColor(status.status, status.duration);
             // fill the country with the appropriate color
             mapLayer.select('path#'+loc_id).style('fill', color);
+            // Fill the array of ongoing conflicts for the info pannel
             if(selected_country_id == null || loc_id == selected_country_id){
                 status.ongoingConflits.forEach(conflict => ongoingConflits.add(conflict));
             }
-        });
+            // Store each location that has at least one active PA
+            if(agreements_by_loc[loc_id]){
+                agreementStatus = getAgreementsStatus(current_date, loc_id);
+                if(agreementStatus.ongoingPA){
+                    locsWithPA.add(loc_id);
+                }
+
+            }
+        });   
         updateInfoPanel(Array.from(ongoingConflits));
+        updateCircles(locsWithPA);
     }
 
 
+    // draw a blue circle at the centroid of each location in the input array
+    // the array contains all the locations that have at least one active PA
+    // remove circles from other locations
+    function updateCircles(locsWithPA){
+        let circles = svg.selectAll('.circles').data(Array.from(locsWithPA), x => x);
+        circles.enter()
+            .append('circle')
+            .classed('circles', true)
+            .attr('cx', x => centroids[x][0])
+            .attr('cy', x => centroids[x][1])
+            //.attr('fill', 'blue')
+            .attr('id', x => 'circle_' + x)
+            .attr('r', 0)
+            .transition()
+            .attr('r', 6)
+            .transition()
+            .attr('r', 3);
+
+        circles.exit()
+            .attr('r', 3)
+            .transition()
+            .attr('r', 0)
+            .remove();
+    }
     // ___________________________________________ INFO PANEL ___________________________________________
 
 
@@ -443,7 +497,9 @@ solution 3:
     }
 
     function getAgreementsStatus(current_date, country_id){
-        let pas = agreements_by_loc[country_id].filter(pa => pa.start >= current_date);
+        let ongoingPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
+        let brokenPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
+        return {'ongoingPA':(ongoingPas.length > 0), 'brokenPA':(brokenPas.length > 0), 'ongoingPas':ongoingPas, 'brokenPas':brokenPas};
     }
 
     // returns the corresponding color (red for conflict, green for peace)

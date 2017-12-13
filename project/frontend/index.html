@@ -3,7 +3,10 @@ Todo-List
 
 TODO add only one cell "show PAs..." per conflict if there are PAs and onclick this cell, expand it to show all the PAs
 TODO onclick a country, show icons showing the number of active/broken PAs so far
+TODO add PAs descriptions and a link to the full text
 TODO different color/icon for UN peace treaties
+TODO static infocell header
+TODO replace Jan 2099 by 'today'
 
 TODO timeline on the bottom
 TODO color switch smooth transition
@@ -98,6 +101,10 @@ solution 3:
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.3);
             font-size: 13px;
+
+            border-style: solid;
+            border-width: 2px;
+            border-color: transparent;
         }
 
         .cell_pa{
@@ -173,6 +180,10 @@ solution 3:
             stroke-width: 2px;
         }
 
+        .show_pa{
+            text-align: center;
+        }
+
     </style>
     <script src="https://d3js.org/d3.v4.min.js"> </script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
@@ -229,6 +240,8 @@ solution 3:
         .style('opacity', 0)
         .transition()
         .style('opacity', 1);
+
+    ;
 
 
     // ___________________________________________ IMPORT DATA ___________________________________________
@@ -405,6 +418,7 @@ solution 3:
     // ___________________________________________ INFO PANEL ___________________________________________
 
 
+    // This method is called on each scroll event to update the infopanel
     function updateInfoPanel(conflict_ids){
 
         let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflict_ids, cft_id => cft_id);
@@ -415,48 +429,87 @@ solution 3:
         cells.enter()
             .append('div')
             .classed('infocell', true)
-            .html(d => fillCellContent(d))
+            .attr('id', cid => 'infocell_' + cid)
+            .attr('open', '0')
+            .on('click', function(d){showHideAgreements(d)})
+            .on('mouseover', function(d){
+                d3.select(this).style('border-color', 'rgb(70, 70, 70)');
+                if(hasAgreements(d)) d3.select(this).select('i').style('opacity', '1');
+            })
+            .on('mouseout', function(d){
+                d3.select(this).style('border-color', 'transparent');
+                d3.select(this).select('i').style('opacity', '0.5');
+            })
+            .html(cid => conflictToString(cid) + closedAgreementToString(hasAgreements(cid)))
             .style('opacity', 0)
             .transition()
             .style('opacity', 1);
+    }
+
+    // this function is called when a conflict cell in the infopanel is clicked
+    // it shows/hides the 
+    function showHideAgreements(cid){
+        if(!conflicts_by_id[cid].PAIDs){
+            console.log("no PAs")
+            return;
+        }
+        let cell = d3.select('#infocell_'+cid);
+        if(cell.attr('open') == '0'){
+            cell.attr('open', '1')
+            .append('div')
+                .attr('class', 'pas_container')
+                .html(agreementToString(cid))
+                .style('opacity', 0)
+                .transition()
+                .style('opacity', 1);
+            cell.select('.show_pa').remove();
+            cell.append('div').html("<div class=show_pa><i style='opacity:0.5'>Click on the cell to hide the peace agreements ...</i></div>");
+        }
+        else{
+            cell.attr('open', '0')
+                .select('.pas_container')
+                .remove();
+            cell.select('.show_pa').remove();
+            cell.append('div').html(closedAgreementToString(true));
+        }
 
     }
 
-    function getAgreementsFromConflicts(cid){
-        let pas = conflicts_by_id[cid].PAIDs;
-        if(!pas) return '';
-        let result;
-        if(pas.length == 0){
-            return '';
-        }
-        else{
-            result = 'test agreement';
-        }
-        console.log(cid + result)
-        return result;
-    }    
-
+    // returns a string decribing the conflict for the infopanel
     function conflictToString(c_id){
         let c = conflicts_by_id[c_id];
         return "ID: " + c_id + "<br/>Location: " + c.locations + "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end) + "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
     }
 
-    function fillCellContent(cid){
-        let result = conflictToString(cid);
+    // returns html code containing 'show more' message
+    function closedAgreementToString(has_pas){
+        return has_pas ? ("<div class=show_pa><i style='opacity:0.5'>Click on the cell to see the peace agreements ...</i></div>") : ("<div class=show_pa><i style='opacity:0.5'>No peace agreement</i></div>");
+    }
+
+    // if cid has PAs, returns the list of its PAIDs, false otherwise
+    function hasAgreements(cid){
+        return conflicts_by_id[cid].PAIDs;
+    }
+
+    
+    // returns html element containing textual representation of all the PAs relative to the input conflict
+    function agreementToString(cid){
+        let result = "";
 
         let paids = conflicts_by_id[cid].PAIDs;
         if(!paids) return result;
         paids.forEach(function(paid){
             let pa = agreements_by_id[paid];
-            result += '<div class=cell_pa>';
+            result += "<div class='cell_pa'>"
             result += "Name: " + pa.name;
-            result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end);
-            result += '</div>';
+            result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end)
+            result += "</div>";
         });
 
         return result;
     }
 
+    // returns html code to fill the header of the infocells
     function infoHeaderToString(locationName=null){
         let res;
         if(locationName){

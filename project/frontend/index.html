@@ -1,17 +1,18 @@
 <!--
 Todo-List
 
-TODO add only one cell "show PAs..." per conflict if there are PAs and onclick this cell, expand it to show all the PAs
 TODO onclick a country, show icons showing the number of active/broken PAs so far
 TODO add PAs descriptions and a link to the full text
 TODO different color/icon for UN peace treaties
 TODO static infocell header
-TODO replace Jan 2099 by 'today'
 
 TODO timeline on the bottom
 TODO color switch smooth transition
 TODO extra: double click -> show induvidual events inside country
 TODO extra: zoom
+
+DONE replace Jan 2099 by 'today'
+DONE add only one cell "show PAs..." per conflict if there are PAs and onclick this cell, expand it to show all the PAs
 DONE import and display peace treaties
 DONE add infocell header
 DONE onclick country: filter the events and display only the events of this country
@@ -434,11 +435,11 @@ solution 3:
             .on('click', function(d){showHideAgreements(d)})
             .on('mouseover', function(d){
                 d3.select(this).style('border-color', 'rgb(70, 70, 70)');
-                if(hasAgreements(d)) d3.select(this).select('i').style('opacity', '1');
+                if(hasAgreements(d)) d3.select(this).select('.show_pa').select('i').style('opacity', '1');
             })
             .on('mouseout', function(d){
                 d3.select(this).style('border-color', 'transparent');
-                d3.select(this).select('i').style('opacity', '0.5');
+                d3.select(this).select('.show_pa').select('i').style('opacity', '0.5');
             })
             .html(cid => conflictToString(cid) + closedAgreementToString(hasAgreements(cid)))
             .style('opacity', 0)
@@ -478,7 +479,12 @@ solution 3:
     // returns a string decribing the conflict for the infopanel
     function conflictToString(c_id){
         let c = conflicts_by_id[c_id];
-        return "ID: " + c_id + "<br/>Location: " + c.locations + "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end) + "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
+        let res = "";
+        res += "<div style='text-align:center'><i style='opacity:0.5'>Conflict #" + c_id + "</i></div>";
+        res += "Location: " + c.locations;
+        res += "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end);
+        res += "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
+        return res;
     }
 
     // returns html code containing 'show more' message
@@ -500,9 +506,10 @@ solution 3:
         if(!paids) return result;
         paids.forEach(function(paid){
             let pa = agreements_by_id[paid];
-            result += "<div class='cell_pa'>"
-            result += "Name: " + pa.name;
-            result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end)
+            result += "<div class='cell_pa'>";
+            result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>";
+            result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end);
+            result += "<br/><br/><div style='white-space: pre-line'>" + pa.comment + "</div>";
             result += "</div>";
         });
 
@@ -531,7 +538,7 @@ solution 3:
 
 
     function dateToString(date){
-        return MONTH_NAMES[date.getMonth()] + " " + date.getFullYear();
+        return date.getFullYear() == 2099 ? 'today' : MONTH_NAMES[date.getMonth()] + " " + date.getFullYear();
     }
 
     // prints the input date in the date container

@@ -1,11 +1,15 @@
 <!--
 Todo-List
 
-TODO import and display peace treaties
+TODO add only one cell "show PAs..." per conflict if there are PAs and onclick this cell, expand it to show all the PAs
+TODO onclick a country, show icons showing the number of active/broken PAs so far
+TODO different color/icon for UN peace treaties
+
 TODO timeline on the bottom
 TODO color switch smooth transition
 TODO extra: double click -> show induvidual events inside country
 TODO extra: zoom
+DONE import and display peace treaties
 DONE add infocell header
 DONE onclick country: filter the events and display only the events of this country
 DONE fix the way conflicts are displayed in the info panel: Some are displayed more than once
@@ -13,7 +17,6 @@ DONE scrollable div
 DONE info pannel on the right
 DONE onmouseover -> display name popup
 DONE Borders should be still visible when green/red contries
-WONTDO possibility to display only PAs, hide conflicts
 
 Ideas
 Put PAs in the conflict box and onclick expand and show infos about PA
@@ -77,12 +80,12 @@ solution 3:
             top: 0px;
             bottom: 0px;
             background-color: transparent;
-            width: 75%;
+            width: 70%;
             height: 100%;
         }
         #infoContainer{
             float: right;
-            width: 24%;
+            width: 29%;
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.1);
             overflow-y: auto;

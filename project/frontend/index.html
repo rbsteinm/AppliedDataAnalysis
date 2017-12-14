@@ -536,7 +536,9 @@ solution 3:
             let previous_color = cell.style('border-color');
             let color = getAgreementColor(agreements_by_id[cell.attr('paid')]);
             if(previous_color != color && previous_color != 'transparent'){
-                cell.style('border-color', color).transition().duration(100).style('border-color', 'transparent').transition().duration(100).style('border-color', color);
+                // laggy transitions
+                //cell.style('border-color', color).transition().duration(100).style('border-color', 'transparent').transition().duration(100).style('border-color', color);
+                cell.style('border-color', color);
             }
         });
     }

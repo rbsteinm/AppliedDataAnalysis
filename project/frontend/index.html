@@ -1,20 +1,17 @@
 <!--
 Todo-List
 
-TODO onclick a country, show icons showing the number of active/broken PAs so far
-TODO different color/icon for UN peace treaties
+TODO different color/icon for UN peace treaties (on the map and on the infopanel, and add a UN logo on the PA cells)
 TODO static infocell header
+TODO onmouseover conflict circle, can also select country (this helps for small countries)
 TODO hide/show PA comments
 TODO add end_comment 'why did this PA end?' to PAs
-TODO information window
+TODO information window to explain the viz
 TODO onmouseover conflict highlight country on map
 TODO don't dispaly PAs for past conflicts?
 
-TODO timeline on the bottom
-TODO color switch smooth transition
-TODO extra: double click -> show induvidual events inside country
-TODO extra: zoom
 
+DONE onclick a country, show icons showing the number of active/broken PAs so far
 DONE PA border color red if PA is broken, blue if active, grey if not active yet
 DONE add PAs descriptions
 DONE replace Jan 2099 by 'today'
@@ -27,6 +24,12 @@ DONE scrollable div
 DONE info pannel on the right
 DONE onmouseover -> display name popup
 DONE Borders should be still visible when green/red contries
+
+wontdos
+TODO timeline on the bottom
+TODO color switch smooth transition
+TODO extra: double click -> show induvidual events inside country
+TODO extra: zoom
 
 Ideas
 Put PAs in the conflict box and onclick expand and show infos about PA
@@ -463,6 +466,34 @@ solution 3:
             .style('opacity', 1);
     }
 
+    // updates in each infocell the number of active/broken PAs
+    function updateInfocells(){
+        infoContainer.selectAll('.infocell').each(function(d){
+            let cell = d3.select(this);
+            let cid = cell.attr('cid');
+            let pa_sums = getAgreementsSums(cid, current_date);
+            cell.select('.pa_sums').html(paSumsToString(pa_sums));
+        });
+    }
+
+    // returns html code to fill the header of the infocells
+    function infoHeaderToString(locationName=null){
+        let res;
+        if(locationName){
+            let locName = locationName.length > 15 ? selected_country_id : locationName;
+            res = "Ongoing conflicts in <strong>" + locName + "</strong>";
+        }
+        else{
+            res = '<i style="opacity:0.5;">Click on any country to select it</i>';
+        }
+
+        return res;
+    }
+
+    function updateInfoHeader(locationName=null){
+        infoContainer.select('#filter-header').html(infoHeaderToString(locationName));
+    }
+
     // this function is called when a conflict cell in the infopanel is clicked
     // it shows/hides the 
     function showHideAgreements(cid){
@@ -489,26 +520,81 @@ solution 3:
             cell.select('.show_pa').remove();
             cell.append('div').html(closedAgreementToString(true));
         }
-
     }
+
+
+    // ___________________________________________ CONFLICTS METHODS ___________________________________________
+
 
     // returns a string decribing the conflict for the infopanel
     function conflictToString(c_id){
         let c = conflicts_by_id[c_id];
         let res = "";
         let pas_sums = getAgreementsSums(c_id, current_date);
-        res += "<div style='text-align:center'><i style='opacity:0.5'>Conflict #" + c_id + "</i></div>";
+        //res += "<div style='text-align:center'><i style='opacity:0.5'>Conflict #" + c_id + "</i></div>";
+        res += "<div style='text-align:right'><span style='opacity:0.5; font-size: 10px'>Conflict #" + c_id + "</span></div>";
         // active/broken PAs count
+        res += "Location: " + c.locations;
+        res += "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end);
+        res += "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
         if(pas_sums){
             res += "<span class='pa_sums'>";
             res += paSumsToString(pas_sums);
             res += "</span>";
         }
-        res += "Location: " + c.locations;
-        res += "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end);
-        res += "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
         return res;
     }
+
+    // returns true if there is at least one conflict in the country, false otherwise
+    function isInConflict(date, country){
+        return conflicts[country].some(conflict => (date > conflict.start && date < conflict.end));
+    }
+
+    // This function returns the status of the country at the given date
+    // and for how long this status has been lasting
+    // it also returns an array containing the ongoing conflicts
+    // true: conflict, false: no conflict (i.e. peace)
+    // country: country id
+    function getConflictStatus(current_date, country){
+        let ongoingConflits = conflicts[country].filter(c => (current_date > c.start && current_date < c.end));
+        let status, duration;
+
+        // The country is at peace
+        if(ongoingConflits.length == 0){
+            status = false;
+            let latestPeaceDay = d3.max([START_DATE, d3.max(conflicts[country].map(c => c.end).filter(end => end < current_date))]);
+            duration = msToDays(current_date - latestPeaceDay);
+        }
+        // Only one conflict in the country at that time
+        else if(ongoingConflits.length == 1){
+            status = true;
+            duration = msToDays(current_date - ongoingConflits[0].start);
+        }
+        // more than one conflict at that time
+        else{
+            status = true;
+            duration = msToDays(current_date - d3.min(ongoingConflits, c => c.start));
+        }
+        return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits.map(c => c.conflict_id)};
+    }
+
+    // returns the corresponding color (red for conflict, green for peace)
+    // the duration determines the intensity (saturation) of the color
+    // status: boolean indicating wether there is a conflict of not
+    // duration: for how long has this status been lasting?
+    function getColor(status, duration){
+        let hue = status ? 360 : 100;
+        let scale = d3.scaleLinear().domain([0, 5000]).range([0.3, 1]).clamp(true);
+        let saturation = scale(duration);
+
+        let color = d3.hsl(hue, saturation, 0.5);
+        return color.rgb();
+    }
+
+
+    // ___________________________________________ AGREEMENTS METHODS ___________________________________________
+
+
 
     // returns html code that contains info about how many PAs are active/broken
     function paSumsToString(pa_sums){
@@ -521,7 +607,6 @@ solution 3:
         } 
         res += "</div>";
         return res;
-
     }
 
     // returns html code containing 'show more' message
@@ -570,34 +655,29 @@ solution 3:
         });
     }
 
-    // updates in each infocell the number of active/broken PAs
-    function updateInfocells(){
-        infoContainer.selectAll('.infocell').each(function(d){
-            let cell = d3.select(this);
-            let cid = cell.attr('cid');
-            let pa_sums = getAgreementsSums(cid, current_date);
-            cell.select('.pa_sums').html(paSumsToString(pa_sums));
-        });
+    function getAgreementsStatus(current_date, country_id){
+        let ongoingPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
+        let brokenPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
+        return {'ongoingPA':(ongoingPas.length > 0), 'brokenPA':(brokenPas.length > 0), 'ongoingPas':ongoingPas, 'brokenPas':brokenPas};
     }
 
-    // returns html code to fill the header of the infocells
-    function infoHeaderToString(locationName=null){
-        let res;
-        if(locationName){
-            let locName = locationName.length > 15 ? selected_country_id : locationName;
-            res = "Ongoing conflicts in <strong>" + locName + "</strong>";
-        }
+    // returns the number of active/broken agreements of the input conflict at the input date
+    function getAgreementsSums(cid, date){
+        if(!hasAgreements(cid)) return false;
+        let activePas = conflicts_by_id[cid].PAIDs.map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
+        let brokenPas = conflicts_by_id[cid].PAIDs.map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
+        return {'active':activePas.length, 'broken':brokenPas.length};
+    }
+
+    function getAgreementColor(pa){
+        if(pa.start > current_date) return 'transparent';
+        else if(pa.end <= current_date) return BROKEN_PA_COLOR;
+        else if(pa.start <= current_date && pa.end > current_date) return ACTIVE_PA_COLOR;
         else{
-            res = '<i style="opacity:0.5;">Click on any country to select it</i>';
+            console.error('Agreement color error, this should not happen');
+            return 'transparent';
         }
-
-        return res;
     }
-
-    function updateInfoHeader(locationName=null){
-        infoContainer.select('#filter-header').html(infoHeaderToString(locationName));
-    }
-
 
     // ___________________________________________ DATE PANEL ___________________________________________
 
@@ -635,80 +715,10 @@ solution 3:
     // ___________________________________________ HELPER METHODS ___________________________________________
 
 
-    // returns true if there is at least one conflict in the country, false otherwise
-    function isInConflict(date, country){
-        return conflicts[country].some(conflict => (date > conflict.start && date < conflict.end));
-    }
-
     // input: a duration in ms
     // output: the same duration in days
     function msToDays(ms){
         return Math.round(ms/(1000*60*60*24));
-    }
-
-    // This function returns the status of the country at the given date
-    // and for how long this status has been lasting
-    // it also returns an array containing the ongoing conflicts
-    // true: conflict, false: no conflict (i.e. peace)
-    // country: country id
-    function getConflictStatus(current_date, country){
-        let ongoingConflits = conflicts[country].filter(c => (current_date > c.start && current_date < c.end));
-        let status, duration;
-
-        // The country is at peace
-        if(ongoingConflits.length == 0){
-            status = false;
-            let latestPeaceDay = d3.max([START_DATE, d3.max(conflicts[country].map(c => c.end).filter(end => end < current_date))]);
-            duration = msToDays(current_date - latestPeaceDay);
-        }
-        // Only one conflict in the country at that time
-        else if(ongoingConflits.length == 1){
-            status = true;
-            duration = msToDays(current_date - ongoingConflits[0].start);
-        }
-        // more than one conflict at that time
-        else{
-            status = true;
-            duration = msToDays(current_date - d3.min(ongoingConflits, c => c.start));
-        }
-        return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits.map(c => c.conflict_id)};
-    }
-
-    function getAgreementsStatus(current_date, country_id){
-        let ongoingPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
-        let brokenPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
-        return {'ongoingPA':(ongoingPas.length > 0), 'brokenPA':(brokenPas.length > 0), 'ongoingPas':ongoingPas, 'brokenPas':brokenPas};
-    }
-
-    // returns the number of active/broken agreements of the input conflict at the input date
-    function getAgreementsSums(cid, date){
-        if(!hasAgreements(cid)) return false;
-        let activePas = conflicts_by_id[cid].PAIDs.map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
-        let brokenPas = conflicts_by_id[cid].PAIDs.map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
-        return {'active':activePas.length, 'broken':brokenPas.length};
-    }
-
-    function getAgreementColor(pa){
-        if(pa.start > current_date) return 'transparent';
-        else if(pa.end <= current_date) return BROKEN_PA_COLOR;
-        else if(pa.start <= current_date && pa.end > current_date) return ACTIVE_PA_COLOR;
-        else{
-            console.error('Agreement color error, this should not happen');
-            return 'transparent';
-        }
-    }
-
-    // returns the corresponding color (red for conflict, green for peace)
-    // the duration determines the intensity (saturation) of the color
-    // status: boolean indicating wether there is a conflict of not
-    // duration: for how long has this status been lasting?
-    function getColor(status, duration){
-        let hue = status ? 360 : 100;
-        let scale = d3.scaleLinear().domain([0, 5000]).range([0.3, 1]).clamp(true);
-        let saturation = scale(duration);
-
-        let color = d3.hsl(hue, saturation, 0.5);
-        return color.rgb();
     }
 
 </script>

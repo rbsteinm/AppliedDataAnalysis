@@ -2,15 +2,16 @@
 Todo-List
 
 TODO UN logo on the map
-TODO static infocell header
-TODO onmouseover conflict circle, can also select country (this helps for small countries)
 TODO hide/show PA comments
 TODO add end_comment 'why did this PA end?' to PAs
 TODO information window to explain the viz
 TODO onmouseover conflict highlight country on map
 TODO don't dispaly PAs for past conflicts?
+TODO don't forget to put back begin date to real first day
 
 
+DONE onmouseover conflict circle, can also select country (this helps for small countries)
+DONE static infocell header
 DONE different color/icon for UN peace treaties (on the map and on the infopanel, and add a UN logo on the PA cells)
 DONE onclick a country, show icons showing the number of active/broken PAs so far
 DONE PA border color red if PA is broken, blue if active, grey if not active yet
@@ -258,6 +259,8 @@ solution 3:
     let selected_country_id = null;
 
     //colors
+    const MAP_STROKE_HL_COLOR = 'rgb(255, 255, 255)';
+    const MAP_STROKE_COLOR = 'rgb(200, 200, 200)';
     const ACTIVE_PA_COLOR = 'rgb(0, 0, 255)';
     const BROKEN_PA_COLOR = 'rgb(255, 0, 0)';
     const CELL_BORDER_COLOR = 'rgb(70, 70, 70)';
@@ -358,12 +361,13 @@ solution 3:
         .enter().append("path")
         .attr("d", path)
         .attr('id', country => country.id)
+        .attr('name', country => country.properties.name)
         .on('mouseover', function(d,i){
-            d3.select(this).style('stroke', 'rgb(255, 255, 255)');
+            d3.select(this).style('stroke', MAP_STROKE_HL_COLOR);
             d3.select(this).style('stroke-width', 2);
         })
         .on('mouseout', function(d, i){
-            d3.select(this).style('stroke', 'rgb(200, 200, 200)');
+            d3.select(this).style('stroke', MAP_STROKE_COLOR);
             d3.select(this).style('stroke-width', 0.5);
         })
         .on('click', function(d){
@@ -379,6 +383,7 @@ solution 3:
             return {'path':path.centroid(f), 'id':f.id};
         }).forEach(c => centroids[c.id] = c.path);
     });
+
 
 
 
@@ -437,16 +442,32 @@ solution 3:
         let circles = svg.selectAll('.circles').data(Array.from(locsWithPA), x => x);
         circles.enter()
             .append('circle')
+            .on('mouseover', function(d){
+                mapContainer.select('path#'+d).style('stroke', MAP_STROKE_HL_COLOR);
+                mapContainer.select('path#'+d).style('stroke-width', 2);
+            })
+            .on('mouseout', function(d){
+                mapContainer.select('path#'+d).style('stroke', MAP_STROKE_COLOR);
+                mapContainer.select('path#'+d).style('stroke-width', 0.5);
+            })
+            .on('click', function(d){
+                selected_country_id = d;
+                updateMapAndInfo();
+                updateInfoHeader(mapContainer.select('path#'+d).attr('name'));
+                d3.event.stopPropagation();
+            })
+            //.append('svg:title').text(function(d, i){return 'test'})
             .classed('circles', true)
             .attr('cx', x => centroids[x][0])
             .attr('cy', x => centroids[x][1])
-            //.attr('fill', 'blue')
             .attr('id', x => 'circle_' + x)
             .attr('r', 0)
             .transition()
             .attr('r', 6)
             .transition()
             .attr('r', 3);
+
+            circles.append('svg:title').text(function(d, i){return mapContainer.select('path#'+d).attr('name')});
 
         circles.exit()
             .attr('r', 3)

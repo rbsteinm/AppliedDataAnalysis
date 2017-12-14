@@ -194,6 +194,7 @@ solution 3:
     </style>
     <script src="https://d3js.org/d3.v4.min.js"> </script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
     <div id='container'>
@@ -510,10 +511,15 @@ solution 3:
     }
 
     // returns html code that contains info about how many PAs are active/broken
-    function paSumsToString(pas_sums){
-        let res = "";       
-        res += "<div>Active peace agreements: " + pas_sums.active + "</div>"; 
-        res += "<div>Broken peace agreements: " + pas_sums.broken + "</div>";
+    function paSumsToString(pa_sums){
+        let res = "<div> Active/Broken peace agreements: ";
+        for(let i = 0; i < pa_sums.active; i++){
+            res += '<i class="test fa fa-check-circle-o" aria-hidden="true" style="text-weight:bold; padding-left: 3px;font-size:16px; color:'+ ACTIVE_PA_COLOR +'"></i>';
+        }
+        for(let i = 0; i < pa_sums.broken; i++){
+            res += '<i class="test fa fa-times-circle-o" aria-hidden="true" style="text-weight:bold; padding-left: 3px;font-size:16px; color:'+ BROKEN_PA_COLOR +'"></i>';
+        } 
+        res += "</div>";
         return res;
 
     }

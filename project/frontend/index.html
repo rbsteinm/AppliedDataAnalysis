@@ -122,7 +122,7 @@ solution 3:
             padding: 5px;
             font-size:12px;
             border-width: 1px;
-            border-color: rgb(0, 0, 255);
+            /*border-color: rgb(0, 0, 255);*/
             border-style: solid;
         }
 
@@ -232,6 +232,11 @@ solution 3:
     let height = mapContainer.node().clientHeight;
     let margin = 8;
     let selected_country_id = null;
+
+    //colors
+    const ACTIVE_PA_COLOR = 'rgb(0, 0, 255)';
+    const BROKEN_PA_COLOR = 'rgb(255, 0, 0)';
+    const CELL_BORDER_COLOR = 'rgb(70, 70, 70)';
 
 
     // ___________________________________________ DOM ELEMENTS ___________________________________________
@@ -394,6 +399,7 @@ solution 3:
         });   
         updateInfoPanel(Array.from(ongoingConflits));
         updateCircles(locsWithPA);
+        updateAgreementsBorders();
     }
 
 
@@ -439,7 +445,7 @@ solution 3:
             .attr('open', '0')
             .on('click', function(d){showHideAgreements(d)})
             .on('mouseover', function(d){
-                d3.select(this).style('border-color', 'rgb(70, 70, 70)');
+                d3.select(this).style('border-color', CELL_BORDER_COLOR);
                 if(hasAgreements(d)) d3.select(this).select('.show_pa').select('i').style('opacity', '1');
             })
             .on('mouseout', function(d){
@@ -494,7 +500,7 @@ solution 3:
 
     // returns html code containing 'show more' message
     function closedAgreementToString(has_pas){
-        return has_pas ? ("<div class=show_pa><i style='opacity:0.5'>Click on the cell to see the peace agreements ...</i></div>") : ("<div class=show_pa><i style='opacity:0.5'>No peace agreement</i></div>");
+        return has_pas ? ("<div class=show_pa><i style='opacity:0.5'>Click on the cell to see the peace agreements ...</i></div>") : ("<div class=show_pa><i style='opacity:0.5'>No peace agreement for this conflict</i></div>");
     }
 
     // if cid has PAs, returns the list of its PAIDs, false otherwise
@@ -511,14 +517,30 @@ solution 3:
         if(!paids) return result;
         paids.forEach(function(paid){
             let pa = agreements_by_id[paid];
-            result += "<div class='cell_pa'>";
-            result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>";
+            let color = getAgreementColor(pa);
+            result += "<div class='cell_pa' paid='" + paid + "' style='border-color:" + color + "'>";
+            result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>" 
             result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end);
             result += "<br/><br/><div style='white-space: pre-line'>" + pa.comment + "</div>";
             result += "</div>";
         });
 
         return result;
+    }
+
+    // selects the open conflict cells and updates the color of the PA cells at each time change
+    function updateAgreementsBorders(){
+        let cells = d3.selectAll('.infocell').filter(function(d){return d3.select(this).attr('open') == '1';}).selectAll('.cell_pa');
+        cells.each(function(d){
+            let cell = d3.select(this);
+            let previous_color = cell.style('border-color');
+            let color = getAgreementColor(agreements_by_id[cell.attr('paid')]);
+            if(previous_color != color && previous_color != 'transparent'){
+                // laggy transitions
+                //cell.style('border-color', color).transition().duration(100).style('border-color', 'transparent').transition().duration(100).style('border-color', color);
+                cell.style('border-color', color);
+            }
+        });
     }
 
     // returns html code to fill the header of the infocells
@@ -618,6 +640,16 @@ solution 3:
         let ongoingPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
         let brokenPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
         return {'ongoingPA':(ongoingPas.length > 0), 'brokenPA':(brokenPas.length > 0), 'ongoingPas':ongoingPas, 'brokenPas':brokenPas};
+    }
+
+    function getAgreementColor(pa){
+        if(pa.start > current_date) return CELL_BORDER_COLOR;
+        else if(pa.end <= current_date) return BROKEN_PA_COLOR;
+        else if(pa.start <= current_date && pa.end > current_date) return ACTIVE_PA_COLOR;
+        else{
+            console.error('Agreement color error, this should not happen');
+            return CELL_BORDER_COLOR;
+        }
     }
 
     // returns the corresponding color (red for conflict, green for peace)

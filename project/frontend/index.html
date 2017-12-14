@@ -519,7 +519,7 @@ solution 3:
             let pa = agreements_by_id[paid];
             let color = getAgreementColor(pa);
             result += "<div class='cell_pa' paid='" + paid + "' style='border-color:" + color + "'>";
-            result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>";
+            result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>" 
             result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end);
             result += "<br/><br/><div style='white-space: pre-line'>" + pa.comment + "</div>";
             result += "</div>";
@@ -533,8 +533,11 @@ solution 3:
         let cells = d3.selectAll('.infocell').filter(function(d){return d3.select(this).attr('open') == '1';}).selectAll('.cell_pa');
         cells.each(function(d){
             let cell = d3.select(this);
+            let previous_color = cell.style('border-color');
             let color = getAgreementColor(agreements_by_id[cell.attr('paid')]);
-            cell.style('border-color', color);
+            if(previous_color != color && previous_color != 'transparent'){
+                cell.style('border-color', color).transition().duration(100).style('border-color', 'transparent').transition().duration(100).style('border-color', color);
+            }
         });
     }
 

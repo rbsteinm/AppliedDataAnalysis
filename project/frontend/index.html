@@ -2,12 +2,12 @@
 Todo-List
 
 TODO onclick a country, show icons showing the number of active/broken PAs so far
-TODO PA border color red if PA is broken, blue if active, grey if not active yet
 TODO different color/icon for UN peace treaties
 TODO static infocell header
-TODO external window for PA comments
+TODO hide/show PA comments
+TODO add end_comment 'why did this PA end?' to PAs
 TODO information window
-TODO onmouseover conflict highlight counntry on map
+TODO onmouseover conflict highlight country on map
 TODO don't dispaly PAs for past conflicts?
 
 TODO timeline on the bottom
@@ -15,6 +15,7 @@ TODO color switch smooth transition
 TODO extra: double click -> show induvidual events inside country
 TODO extra: zoom
 
+DONE PA border color red if PA is broken, blue if active, grey if not active yet
 DONE add PAs descriptions
 DONE replace Jan 2099 by 'today'
 DONE add only one cell "show PAs..." per conflict if there are PAs and onclick this cell, expand it to show all the PAs
@@ -398,6 +399,7 @@ solution 3:
             }
         });   
         updateInfoPanel(Array.from(ongoingConflits));
+        updateInfocells();
         updateCircles(locsWithPA);
         updateAgreementsBorders();
     }
@@ -430,7 +432,8 @@ solution 3:
     // ___________________________________________ INFO PANEL ___________________________________________
 
 
-    // This method is called on each scroll event to update the infopanel
+    // This method is called on each scroll event to append new conficts 
+    // and remove finished conflicts
     function updateInfoPanel(conflict_ids){
 
         let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflict_ids, cft_id => cft_id);
@@ -442,6 +445,7 @@ solution 3:
             .append('div')
             .classed('infocell', true)
             .attr('id', cid => 'infocell_' + cid)
+            .attr('cid', cid => cid)
             .attr('open', '0')
             .on('click', function(d){showHideAgreements(d)})
             .on('mouseover', function(d){
@@ -491,11 +495,27 @@ solution 3:
     function conflictToString(c_id){
         let c = conflicts_by_id[c_id];
         let res = "";
+        let pas_sums = getAgreementsSums(c_id, current_date);
         res += "<div style='text-align:center'><i style='opacity:0.5'>Conflict #" + c_id + "</i></div>";
+        // active/broken PAs count
+        if(pas_sums){
+            res += "<span class='pa_sums'>";
+            res += paSumsToString(pas_sums);
+            res += "</span>";
+        }
         res += "Location: " + c.locations;
         res += "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end);
         res += "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
         return res;
+    }
+
+    // returns html code that contains info about how many PAs are active/broken
+    function paSumsToString(pas_sums){
+        let res = "";       
+        res += "<div>Active peace agreements: " + pas_sums.active + "</div>"; 
+        res += "<div>Broken peace agreements: " + pas_sums.broken + "</div>";
+        return res;
+
     }
 
     // returns html code containing 'show more' message
@@ -533,13 +553,24 @@ solution 3:
         let cells = d3.selectAll('.infocell').filter(function(d){return d3.select(this).attr('open') == '1';}).selectAll('.cell_pa');
         cells.each(function(d){
             let cell = d3.select(this);
-            let previous_color = cell.style('border-color');
+            //let previous_color = cell.style('border-color');
             let color = getAgreementColor(agreements_by_id[cell.attr('paid')]);
-            if(previous_color != color && previous_color != 'transparent'){
+            cell.style('border-color', color);
+            /*if(previous_color != color){
                 // laggy transitions
                 //cell.style('border-color', color).transition().duration(100).style('border-color', 'transparent').transition().duration(100).style('border-color', color);
                 cell.style('border-color', color);
-            }
+            }*/
+        });
+    }
+
+    // updates in each infocell the number of active/broken PAs
+    function updateInfocells(){
+        infoContainer.selectAll('.infocell').each(function(d){
+            let cell = d3.select(this);
+            let cid = cell.attr('cid');
+            let pa_sums = getAgreementsSums(cid, current_date);
+            cell.select('.pa_sums').html(paSumsToString(pa_sums));
         });
     }
 
@@ -553,6 +584,7 @@ solution 3:
         else{
             res = '<i style="opacity:0.5;">Click on any country to select it</i>';
         }
+
         return res;
     }
 
@@ -642,13 +674,21 @@ solution 3:
         return {'ongoingPA':(ongoingPas.length > 0), 'brokenPA':(brokenPas.length > 0), 'ongoingPas':ongoingPas, 'brokenPas':brokenPas};
     }
 
+    // returns the number of active/broken agreements of the input conflict at the input date
+    function getAgreementsSums(cid, date){
+        if(!hasAgreements(cid)) return false;
+        let activePas = conflicts_by_id[cid].PAIDs.map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
+        let brokenPas = conflicts_by_id[cid].PAIDs.map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
+        return {'active':activePas.length, 'broken':brokenPas.length};
+    }
+
     function getAgreementColor(pa){
-        if(pa.start > current_date) return CELL_BORDER_COLOR;
+        if(pa.start > current_date) return 'transparent';
         else if(pa.end <= current_date) return BROKEN_PA_COLOR;
         else if(pa.start <= current_date && pa.end > current_date) return ACTIVE_PA_COLOR;
         else{
             console.error('Agreement color error, this should not happen');
-            return CELL_BORDER_COLOR;
+            return 'transparent';
         }
     }
 

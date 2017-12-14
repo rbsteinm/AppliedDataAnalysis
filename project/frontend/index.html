@@ -130,6 +130,13 @@ solution 3:
             border-style: solid;
         }
 
+        .cell_pa_un{
+            background-image: url(data/un_logo.png);
+            background-repeat: no-repeat;
+            background-position: 98% 8px;
+            background-size: 60px;
+        }
+
         #infocell-header{
             white-space:nowrap;
             margin-top: 25px;
@@ -194,6 +201,11 @@ solution 3:
             text-align: center;
         }
 
+        .pa_logo{
+            float: right;
+            width:18px;
+        }
+
     </style>
     <script src="https://d3js.org/d3.v4.min.js"> </script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
@@ -242,6 +254,7 @@ solution 3:
     const ACTIVE_PA_COLOR = 'rgb(0, 0, 255)';
     const BROKEN_PA_COLOR = 'rgb(255, 0, 0)';
     const CELL_BORDER_COLOR = 'rgb(70, 70, 70)';
+    const UN_COLOR = 'rgb(91, 146, 229)';
 
 
     // ___________________________________________ DOM ELEMENTS ___________________________________________
@@ -290,8 +303,9 @@ solution 3:
             var startdate = new Date(parseInt(startdatesplit[0]), parseInt(startdatesplit[1])-1, parseInt(startdatesplit[2]));
             var enddatesplit = row.enddate.split('-');
             var enddate = new Date(parseInt(enddatesplit[0]), parseInt(enddatesplit[1])-1, parseInt(enddatesplit[2]));
+            let un = row.UN == '0'? false : true;
             // store PAs by PAIDs
-            agreements_by_id[row.PAID] = {'name':row.pa_name, 'start':startdate, 'end':enddate, 'comment':row.pa_comment, 'end_comment':row.c_duration, 'link':row.link, 'locationID':row.locationID, 'cid':row.CID};
+            agreements_by_id[row.PAID] = {'name':row.pa_name, 'start':startdate, 'end':enddate, 'comment':row.pa_comment, 'end_comment':row.c_duration, 'link':row.link, 'locationID':row.locationID, 'cid':row.CID, 'UN': un};
             // store PAIDs by location
             row.locationID.split(',').forEach(function(loc_id){
                 // create the dict entry if it does not exist yet
@@ -599,10 +613,20 @@ solution 3:
     // returns html code that contains info about how many PAs are active/broken
     function paSumsToString(pa_sums){
         let res = "<div> Active/Broken peace agreements: ";
-        for(let i = 0; i < pa_sums.active; i++){
+        // active United Nations PAs
+        for(let i = 0; i < pa_sums.activeUn; i++){
+            res += '<img src="data/un_logo.png" style="padding-left: 3px; width:20px;">';
+        }
+        // broken United Nations PAs
+        for(let i = 0; i < pa_sums.brokenUn; i++){
+            res += '<img src="data/un_logo_cross.png" style="padding-left: 3px; width:20px;">';
+        }
+        // active Non-UN PAs
+        for(let i = 0; i < pa_sums.activeNonUn; i++){
             res += '<i class="test fa fa-check-circle-o" aria-hidden="true" style="text-weight:bold; padding-left: 3px;font-size:16px; color:'+ ACTIVE_PA_COLOR +'"></i>';
         }
-        for(let i = 0; i < pa_sums.broken; i++){
+        // broken Non-UN PAs
+        for(let i = 0; i < pa_sums.brokenNonUn; i++){
             res += '<i class="test fa fa-times-circle-o" aria-hidden="true" style="text-weight:bold; padding-left: 3px;font-size:16px; color:'+ BROKEN_PA_COLOR +'"></i>';
         } 
         res += "</div>";
@@ -623,13 +647,14 @@ solution 3:
     // returns html element containing textual representation of all the PAs relative to the input conflict
     function agreementToString(cid){
         let result = "";
-
         let paids = conflicts_by_id[cid].PAIDs;
         if(!paids) return result;
         paids.forEach(function(paid){
             let pa = agreements_by_id[paid];
             let color = getAgreementColor(pa);
-            result += "<div class='cell_pa' paid='" + paid + "' style='border-color:" + color + "'>";
+            // put the UN logo if it's a UN treaty
+            let cell_class = pa.UN ? 'cell_pa cell_pa_un' : 'cell_pa';
+            result += "<div class='" + cell_class + "' paid='" + paid + "' style='border-color:" + color + ";'>";
             result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>" 
             result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end);
             result += "<br/><br/><div style='white-space: pre-line'>" + pa.comment + "</div>";
@@ -664,9 +689,12 @@ solution 3:
     // returns the number of active/broken agreements of the input conflict at the input date
     function getAgreementsSums(cid, date){
         if(!hasAgreements(cid)) return false;
-        let activePas = conflicts_by_id[cid].PAIDs.map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
-        let brokenPas = conflicts_by_id[cid].PAIDs.map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
-        return {'active':activePas.length, 'broken':brokenPas.length};
+        let pas = conflicts_by_id[cid].PAIDs.map(paid => agreements_by_id[paid]);
+        let activePas = pas.filter(pa => (current_date >= pa.start && current_date < pa.end));
+        let activeUn = activePas.filter(pa => pa.UN);
+        let brokenPas = pas.filter(pa => (current_date >= pa.start && current_date >= pa.end));
+        let brokenUn = brokenPas.filter(pa => pa.UN);
+        return {'activeNonUn':(activePas.length - activeUn.length), 'brokenNonUn':(brokenPas.length - brokenUn.length), 'activeUn':activeUn.length, 'brokenUn':brokenUn.length};
     }
 
     function getAgreementColor(pa){

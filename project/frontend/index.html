@@ -1,7 +1,7 @@
 <!--
 Todo-List
 
-TODO different color/icon for UN peace treaties (on the map and on the infopanel, and add a UN logo on the PA cells)
+TODO UN logo on the map
 TODO static infocell header
 TODO onmouseover conflict circle, can also select country (this helps for small countries)
 TODO hide/show PA comments
@@ -11,6 +11,7 @@ TODO onmouseover conflict highlight country on map
 TODO don't dispaly PAs for past conflicts?
 
 
+DONE different color/icon for UN peace treaties (on the map and on the infopanel, and add a UN logo on the PA cells)
 DONE onclick a country, show icons showing the number of active/broken PAs so far
 DONE PA border color red if PA is broken, blue if active, grey if not active yet
 DONE add PAs descriptions
@@ -109,7 +110,8 @@ solution 3:
             margin: 10px;
             padding: 5px;
             border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.3);
+            /*background-color: rgba(255, 255, 255, 0.3);*/
+            background-color: rgb(180, 180, 180);
             font-size: 13px;
 
             border-style: solid;
@@ -139,9 +141,12 @@ solution 3:
 
         #infocell-header{
             white-space:nowrap;
-            margin-top: 25px;
+            padding-top: 25px;
             margin-bottom: 30px;
             margin-left: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 2;
         }
 
         #filter-header{
@@ -155,7 +160,8 @@ solution 3:
             padding-top: 15px;
             padding-bottom: 15px;
             
-            background-color: rgba(255, 255, 255, 0.3);
+            /*background-color: rgba(255, 255, 255, 0.3);*/
+            background-color: rgb(180, 180, 180);
             font-size: 14px;
         }
 
@@ -166,7 +172,8 @@ solution 3:
             /*line-height: 50px;*/
             /*display: block;*/
 
-            background-color: rgba(255, 255, 255, 0.3);
+            /*background-color: rgba(255, 255, 255, 0.3);*/
+            background-color: rgb(180, 180, 180);
             font-size: 14px;
             border-radius: 10px;
             border-color: rgb(70, 70, 70);

@@ -700,8 +700,9 @@ solution 3:
             let cell_class = pa.UN ? 'cell_pa cell_pa_un' : 'cell_pa';
             result += "<div class='" + cell_class + "' paid='" + paid + "' style='border-color: transparent;' onmouseover='agreementCellBorder(this, true);' onmouseout='agreementCellBorder(this, false)'>";
             result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>" 
-            result += "<br/><div class='pa_status'>Agreement status: <span style='color: " + pa_status.color + "'>" + pa_status.status + "</span></div>";
-            result += "Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end);
+            //result += "<br/><div class='pa_status'>Agreement status: <span style='color: " + pa_status.color + "'>" + pa_status.status + "</span></div>";
+            let statusString = "<span class='pa_status' style='color: " + pa_status.color + "'><span> (" + pa_status.status + ")</span></span>";
+            result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end) + statusString;
             result += "<br/><br/><div style='white-space: pre-line'>" + pa.comment + "</div>";
             result += "</div>";
         });
@@ -728,7 +729,7 @@ solution 3:
             let pa = agreements_by_id[cell.attr('paid')];
             let pa_status = getAgreementStatus(pa);
             // edit the status text in the cell
-            cell.select('div.pa_status').html("Agreement status: <span style='color: " + pa_status.color + "'>" + pa_status.status + "</span>");
+            cell.select('span.pa_status').html("<span style='color: " + pa_status.color + "'> (" + pa_status.status + ")</span>");
         });
     }
 

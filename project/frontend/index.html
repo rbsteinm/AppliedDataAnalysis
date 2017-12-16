@@ -1,16 +1,19 @@
 <!--
 Todo-List
 
-TODO UN logo on the map
 TODO hide/show PA comments
 TODO add end_comment 'why did this PA end?' to PAs
-TODO information window to explain the viz
-TODO white background on UN logo?
-TODO don't dispaly PAs for past conflicts?
+TODO write viz description for tooltip
+TODO onclick country display a 2nd section 'past conflicts' to see the past PAs ?
+
 TODO don't forget to put back begin date to real first day
 TODO leave a few seconds to load the data (data does not appear if you scroll immediately)
 
 
+
+DONR information window to explain the viz
+DONE UN logo on the map
+DONE white background on UN logo?
 DONE onmouseover conflict highlight country on map
 DONE onmouseover conflict circle, can also select country (this helps for small countries)
 DONE static infocell header
@@ -30,6 +33,8 @@ DONE onmouseover -> display name popup
 DONE Borders should be still visible when green/red contries
 
 wontdos
+TODO add legend on top of the map for icon/circle + color meaning (wontdo, infopanel is enough)
+TODO don't dispaly PAs for past conflicts? Yes because we can see if there is stability in the region
 TODO timeline on the bottom
 TODO color switch smooth transition
 TODO extra: double click -> show induvidual events inside country
@@ -217,6 +222,34 @@ solution 3:
             width:18px;
         }
 
+        .infodiv{
+            padding-left: 8px;
+            padding-top: 3px;
+            position: absolute;
+            color:rgb(50, 50, 50);
+        }
+
+        .tooltip{  
+            position: absolute;         
+            text-align: left;         
+            width: 400px;                 
+            padding: 20px;               
+            font: 13px sans-serif;      
+            background: white; 
+            border: 0px;        
+            border-radius: 10px;         
+            pointer-events: none;
+        }
+
+        /*div.colorBox{
+            width: 20px;
+            height: 10px;
+        }
+
+        div#legendBox{
+            height: 100px;
+        }*/
+
     </style>
     <script src="https://d3js.org/d3.v4.min.js"> </script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
@@ -224,6 +257,7 @@ solution 3:
 </head>
 <body>
     <div id='container'>
+        <!--<div id='legendBox'></div>-->
         <div id='infoContainer'>
             <div id='infocell-header'>
                 <span id='filter-header'></span>
@@ -246,7 +280,7 @@ solution 3:
     const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const PATH_TO_MAP = './data/countries.geo.json';
     const STEP_SIZE = 40; // represents the speed of the slider
-    const START_DATE = new Date("1975-01-01");
+    const START_DATE = new Date("1970-01-01");
     const END_DATE = new Date("2016-12-01");
     let current_date = START_DATE;
     let mapContainer = d3.select("#mapContainer");
@@ -286,7 +320,7 @@ solution 3:
         .transition()
         .style('opacity', 1);
 
-    ;
+    printInfoIcon();
 
 
     // ___________________________________________ IMPORT DATA ___________________________________________
@@ -875,6 +909,54 @@ solution 3:
     function msToDays(ms){
         return Math.round(ms/(1000*60*60*24));
     }
+
+    // prints an information icon at the top left of the page
+    // onmouseover this icon, some info about the viz is displayed
+    function printInfoIcon(){
+        d3.select('#container')
+            .append('div')
+            .html( '<i class="infodiv fa fa-info-circle" aria-hidden="true" style="font-size: 30px"></i>')
+            .on("mouseover", function(d) {      
+                div.transition()        
+                    .duration(200)      
+                    .style("opacity", .8);      
+                div .html(vizInfoToString())  
+                    .style("left", '40px')     
+                    .style("top", '10px');    
+            })                  
+            .on("mouseout", function(d) {       
+                div.transition()        
+                    .duration(500)      
+                    .style("opacity", 0);   
+            });
+
+        var div = d3.select("#container").append("div")   
+            .attr("class", "tooltip")               
+            .style("opacity", 0);
+    }
+
+    function vizInfoToString(){
+        return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum nec nibh nec justo tempor aliquet. Nulla ornare gravida quam, quis posuere eros vulputate id. Ut lacinia volutpat urna, a semper nisi ullamcorper eget. Pellentesque sed neque in magna congue feugiat gravida at lacus. Pellentesque bibendum mi metus, quis faucibus nisi viverra et. Vestibulum a dictum quam, mattis porttitor justo. Mauris arcu orci, congue eu urna eu, eleifend imperdiet ipsum. Nulla pulvinar erat odio, at convallis lectus pellentesque eu. Praesent eros mi, blandit sit amet odio eget, condimentum lacinia quam. Curabitur ullamcorper magna eu diam aliquam semper. Mauris eget nisi eget nisi ornare tempus ac nec leo. Sed varius dolor massa, a euismod nisi auctor ac.<br/><br/>Sed quis arcu ipsum. Vestibulum ante turpis, congue a lectus quis, vehicula pulvinar elit. Curabitur lacinia sapien mauris, at vestibulum magna cursus ac. Nunc efficitur finibus neque. Aenean tortor lorem, iaculis at ligula non, hendrerit sagittis nisl. Pellentesque quam arcu, luctus ac sollicitudin non, congue in nunc. Maecenas at elit quis ante luctus dignissim id consectetur enim. Aenean porttitor blandit dui, non egestas mi tristique vitae. Fusce eleifend interdum dui eu pulvinar.";
+    }
+
+    /*function colorScale(c1, c2){
+        var legend_box = d3.select("#legendBox"),
+        length = 10,
+        color = d3.scaleLinear().domain([1,length])
+          .interpolate(d3.interpolateHcl)
+          .range([d3.rgb(c1), d3.rgb(c2)]);
+
+
+      for (var i = 0; i < length; i++) {
+        legend_box.append('div').attr('class', 'colorBox').attr('style', function (d) {
+          return 'background-color: ' + color(i);
+        });
+      }
+    }
+
+    let red1 = d3.hsl(360, 0.3, 0.5);
+    let red2 = d3.hsl(360, 1, 0.5);
+    colorScale(red1, red2)*/
 
 </script>
 </html>

@@ -4,14 +4,14 @@ Todo-List
 TODO hide/show PA comments
 TODO add end_comment 'why did this PA end?' to PAs
 TODO write viz description for tooltip
-TODO onclick country display a 2nd section 'past conflicts' to see the past PAs ?
 
 TODO don't forget to put back begin date to real first day
 TODO leave a few seconds to load the data (data does not appear if you scroll immediately)
 
 
 
-DONR information window to explain the viz
+DONE onclick country display a 2nd section 'past conflicts' to see the past PAs
+DONE information window to explain the viz
 DONE UN logo on the map
 DONE white background on UN logo?
 DONE onmouseover conflict highlight country on map
@@ -621,7 +621,7 @@ solution 3:
                     mapContainer.select('path#'+loc).style('stroke-width', 0.5);
                 });
             })
-            .html(cid => conflictToString(cid, is_past) + closedAgreementToString(hasAgreements(cid)))
+            .html(cid => conflictToString(cid, is_past) + closedConflictToString(hasAgreements(cid)))
             .style('opacity', 0)
             .transition()
             .style('opacity', 1);
@@ -679,7 +679,7 @@ solution 3:
                 .select('.pas_container')
                 .remove();
             cell.select('.show_pa').remove();
-            cell.append('div').html(closedAgreementToString(true));
+            cell.append('div').html(closedConflictToString(true));
         }
     }
 
@@ -754,6 +754,12 @@ solution 3:
         return color.rgb();
     }
 
+    // returns html code containing 'show more' message
+    function closedConflictToString(has_pas){
+        let text = has_pas ? 'Click on the cell to see the peace agreements ...' : 'No peace agreement for this conflict';
+        return "<div class=show_pa><i style='opacity:0.5'>" + text + "</i></div>";
+    }
+
 
     // ___________________________________________ AGREEMENTS METHODS ___________________________________________
 
@@ -782,11 +788,6 @@ solution 3:
         return res;
     }
 
-    // returns html code containing 'show more' message
-    function closedAgreementToString(has_pas){
-        return has_pas ? ("<div class=show_pa><i style='opacity:0.5'>Click on the cell to see the peace agreements ...</i></div>") : ("<div class=show_pa><i style='opacity:0.5'>No peace agreement for this conflict</i></div>");
-    }
-
     // if cid has PAs, returns the list of its PAIDs, false otherwise
     function hasAgreements(cid){
         return conflicts_by_id[cid].PAIDs;
@@ -804,14 +805,12 @@ solution 3:
             // put the UN logo if it's a UN treaty
             let cell_class = pa.UN ? 'cell_pa cell_pa_un' : 'cell_pa';
             result += "<div class='" + cell_class + "' paid='" + paid + "' style='border-color: transparent;' onmouseover='agreementCellBorder(this, true);' onmouseout='agreementCellBorder(this, false)'>";
-            result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>" 
-            //result += "<br/><div class='pa_status'>Agreement status: <span style='color: " + pa_status.color + "'>" + pa_status.status + "</span></div>";
+            result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>";
             let statusString = "<span class='pa_status' style='color: " + pa_status.color + "'><span> (" + pa_status.status + ")</span></span>";
             result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end) + statusString;
             result += "<br/><br/><div style='white-space: pre-line'>" + pa.comment + "</div>";
             result += "</div>";
         });
-
         return result;
     }
 

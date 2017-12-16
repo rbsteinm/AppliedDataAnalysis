@@ -667,7 +667,7 @@ solution 3:
             cell.attr('open', '1')
             .append('div')
                 .attr('class', 'pas_container')
-                .html(agreementToString(cid))
+                .html(agreementsToString(cid))
                 .style('opacity', 0)
                 .transition()
                 .style('opacity', 1);
@@ -795,22 +795,63 @@ solution 3:
 
     
     // returns html element containing textual representation of all the PAs relative to the input conflict
-    function agreementToString(cid){
+    function agreementsToString(cid){
         let result = "";
         let paids = conflicts_by_id[cid].PAIDs;
         if(!paids) return result;
         paids.forEach(function(paid){
-            let pa = agreements_by_id[paid];
-            let pa_status = getAgreementStatus(pa);
-            // put the UN logo if it's a UN treaty
-            let cell_class = pa.UN ? 'cell_pa cell_pa_un' : 'cell_pa';
-            result += "<div class='" + cell_class + "' paid='" + paid + "' style='border-color: transparent;' onmouseover='agreementCellBorder(this, true);' onmouseout='agreementCellBorder(this, false)'>";
-            result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>";
-            let statusString = "<span class='pa_status' style='color: " + pa_status.color + "'><span> (" + pa_status.status + ")</span></span>";
-            result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end) + statusString;
-            result += "<br/><br/><div style='white-space: pre-line'>" + pa.comment + "</div>";
-            result += "</div>";
+            result += '<span onclick="openClosePA(this);" open="0">';
+            result += closedAgreementToString(paid);
+            result += '</span>'
         });
+        return result;
+    }
+
+    function closedAgreementToString(paid){
+        result = "";
+        let pa = agreements_by_id[paid];
+        let pa_status = getAgreementStatus(pa);
+        // put the UN logo if it's a UN treaty
+        let cell_class = pa.UN ? 'cell_pa cell_pa_un' : 'cell_pa';
+        result += "<div class='" + cell_class + "' paid='" + paid + "' style='border-color: transparent;' onmouseover='agreementCellBorder(this, true);' onmouseout='agreementCellBorder(this, false)'>";
+        result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>";
+        let statusString = "<span class='pa_status' style='color: " + pa_status.color + "'><span> (" + pa_status.status + ")</span></span>";
+        result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end) + statusString;
+        result += "<br/><br/><div style='text-align: center;'><i style='opacity:0.5'>Click to learn more about this agreement ...</i></div>";
+        result += "</div>";
+        return result;
+
+    }
+
+    // this function opens/closes a PA when it is clicked
+    // input: clicked DOM element (PA cell)
+    function openClosePA(cell){
+        event.stopPropagation();
+        let elem = d3.select(cell);
+        let open = (elem.attr('open') == '1');
+        if(open){
+            elem.html(closedAgreementToString(elem.select('div').attr('paid'))); 
+            elem.attr('open', '0');
+        }
+        else{
+            elem.html(openedAgreementToString(elem.select('div').attr('paid')));
+            elem.attr('open', '1');
+        }
+    }
+
+    function openedAgreementToString(paid){
+        result = "";
+        let pa = agreements_by_id[paid];
+        let pa_status = getAgreementStatus(pa);
+        // put the UN logo if it's a UN treaty
+        let cell_class = pa.UN ? 'cell_pa cell_pa_un' : 'cell_pa';
+        result += "<div class='" + cell_class + "' paid='" + paid + "' style='border-color: transparent;' onmouseover='agreementCellBorder(this, true);' onmouseout='agreementCellBorder(this, false)'>";
+        result += "<div style='text-align:center'><strong><i style='opacity:1'>" + pa.name + "</i></strong></div>";
+        let statusString = "<span class='pa_status' style='color: " + pa_status.color + "'><span> (" + pa_status.status + ")</span></span>";
+        result += "<br/>Duration: " + dateToString(pa.start) + " - " + dateToString(pa.end) + statusString;
+        result += "<br/><br/><div style='white-space: pre-line'>" + pa.comment + "</div>";
+        result += "<br/><br/><div style='text-align: center;'><i style='opacity:0.5'>Click the cell to close it</i></div>";
+        result += "</div>";
         return result;
     }
 

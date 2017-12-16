@@ -114,7 +114,7 @@ solution 3:
             overflow-x: hidden;
         }
 
-        .infocell{
+        .infocell, .infocell_past{
             margin: 10px;
             padding: 5px;
             border-radius: 10px;
@@ -381,6 +381,8 @@ solution 3:
         .attr('height', height)
         .on('click', function(d){
             selected_country_id = null;
+            // remove all past conflicts cells
+            infoContainer.selectAll('.infocell_past').remove();
             updateMapAndInfo();
             updateInfoHeader();
         });
@@ -449,6 +451,7 @@ solution 3:
     // and the info panel on the right
     function updateMapAndInfo(){
         let ongoingConflits = new Set();
+        let pastConflicts = new Set();
         let locsWithPA = new Set();
         let locsWithUNPA = new Set();
         Object.keys(conflicts).forEach(function(loc_id){
@@ -459,6 +462,10 @@ solution 3:
             // Fill the array of ongoing conflicts for the info pannel
             if(selected_country_id == null || loc_id == selected_country_id){
                 status.ongoingConflits.forEach(conflict => ongoingConflits.add(conflict));
+            }
+            // only add past conflicts if a location is selected
+            if(loc_id == selected_country_id && selected_country_id != null){
+                status.pastConflicts.forEach(cid => pastConflicts.add(cid));
             }
             // Store each location that has at least one active PA
             if(agreements_by_loc[loc_id]){
@@ -474,7 +481,7 @@ solution 3:
 
             }
         });   
-        updateInfoPanel(Array.from(ongoingConflits));
+        updateInfoPanel(Array.from(ongoingConflits), Array.from(pastConflicts));
         updateInfocells();
         updateAgreementCells();
         updateUNCircles(locsWithUNPA);
@@ -572,16 +579,26 @@ solution 3:
 
     // This method is called on each scroll event to append new conficts 
     // and remove finished conflicts
-    function updateInfoPanel(conflict_ids){
+    function updateInfoPanel(ongoing_cids, past_cids){
+        appendInfocells(ongoing_cids, false);
+        if(selected_country_id != null){
+            appendInfocells(past_cids, true);
+        }
+        
+    }
 
-        let cells = d3.select('div#infoContainer').selectAll('.infocell').data(conflict_ids, cft_id => cft_id);
+    // this methods appends a cell in the info_panel for each c_id in the input list
+    // is_past is a boolean used to differentiate list of ongoing conflicts from list of past conflicts
+    function appendInfocells(conflict_ids, is_past){
+        let cell_class = is_past ? 'infocell_past' : 'infocell';
+        let cells = d3.select('div#infoContainer').selectAll('.'+cell_class).data(conflict_ids, cft_id => cft_id);
         
         cells.exit()
             .remove();
         
         cells.enter()
             .append('div')
-            .classed('infocell', true)
+            .attr('class', cell_class)
             .attr('id', cid => 'infocell_' + cid)
             .attr('cid', cid => cid)
             .attr('open', '0')
@@ -604,7 +621,7 @@ solution 3:
                     mapContainer.select('path#'+loc).style('stroke-width', 0.5);
                 });
             })
-            .html(cid => conflictToString(cid) + closedAgreementToString(hasAgreements(cid)))
+            .html(cid => conflictToString(cid, is_past) + closedAgreementToString(hasAgreements(cid)))
             .style('opacity', 0)
             .transition()
             .style('opacity', 1);
@@ -612,7 +629,7 @@ solution 3:
 
     // updates in each infocell the number of active/broken PAs
     function updateInfocells(){
-        infoContainer.selectAll('.infocell').each(function(d){
+        infoContainer.selectAll('.infocell, .infocell_past').each(function(d){
             let cell = d3.select(this);
             let cid = cell.attr('cid');
             let pa_sums = getAgreementsSums(cid, current_date);
@@ -671,7 +688,7 @@ solution 3:
 
 
     // returns a string decribing the conflict for the infopanel
-    function conflictToString(c_id){
+    function conflictToString(c_id, is_past){
         let c = conflicts_by_id[c_id];
         let res = "";
         let pas_sums = getAgreementsSums(c_id, current_date);
@@ -679,6 +696,7 @@ solution 3:
         res += "<div style='text-align:right'><span style='opacity:0.5; font-size: 10px'>Conflict #" + c_id + "</span></div>";
         // active/broken PAs count
         res += "Location: " + c.locations;
+        res += is_past ? '<br/>Conflict status: <span style="color:green;">resolved</span>' : '<br/>Conflict status: <span style="color:red;">active</span>';
         res += "<br/>Duration: " + dateToString(c.start) + " - " + dateToString(c.end);
         res += "<br/>Side A: " + c.sidea + "<br/>Side B: " + c.sideb;
         if(pas_sums){
@@ -701,6 +719,7 @@ solution 3:
     // country: country id
     function getConflictStatus(current_date, country){
         let ongoingConflits = conflicts[country].filter(c => (current_date > c.start && current_date < c.end));
+        let pastConflicts = conflicts[country].filter(c => (c.end >= START_DATE && current_date > c.start && current_date >= c.end));
         let status, duration;
 
         // The country is at peace
@@ -719,7 +738,7 @@ solution 3:
             status = true;
             duration = msToDays(current_date - d3.min(ongoingConflits, c => c.start));
         }
-        return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits.map(c => c.conflict_id)};
+        return {'status': status, 'duration':duration, 'ongoingConflits':ongoingConflits.map(c => c.conflict_id), 'pastConflicts':pastConflicts.map(c => c.conflict_id)};
     }
 
     // returns the corresponding color (red for conflict, green for peace)
@@ -809,7 +828,7 @@ solution 3:
 
     // updates the textual status of the visible PA cells (broken, active, forthcoming)
     function updateAgreementCells(){
-        let cells = d3.selectAll('.infocell').filter(function(d){return d3.select(this).attr('open') == '1';}).selectAll('.cell_pa');
+        let cells = d3.selectAll('.infocell, .infocell_past').filter(function(d){return d3.select(this).attr('open') == '1';}).selectAll('.cell_pa');
         cells.each(function(d){
             let cell = d3.select(this);
             let pa = agreements_by_id[cell.attr('paid')];

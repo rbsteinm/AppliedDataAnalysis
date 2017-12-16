@@ -416,6 +416,7 @@ solution 3:
     function updateMapAndInfo(){
         let ongoingConflits = new Set();
         let locsWithPA = new Set();
+        let locsWithUNPA = new Set();
         Object.keys(conflicts).forEach(function(loc_id){
             let status = getConflictStatus(current_date, loc_id);
             let color = getColor(status.status, status.duration);
@@ -429,25 +430,34 @@ solution 3:
             if(agreements_by_loc[loc_id]){
                 paStatus = locPaStatus(current_date, loc_id);
                 if(paStatus.ongoingPA){
-                    locsWithPA.add(loc_id);
+                    if(paStatus.is_un){
+                        locsWithUNPA.add(loc_id);
+                    }
+                    else{
+                        locsWithPA.add(loc_id); 
+                    }
                 }
 
             }
         });   
         updateInfoPanel(Array.from(ongoingConflits));
         updateInfocells();
-        updateCircles(locsWithPA);
         updateAgreementCells();
+        updateUNCircles(locsWithUNPA);
+        updateCircles(locsWithPA);
     }
 
 
     // draw a blue circle at the centroid of each location in the input array
     // the array contains all the locations that have at least one active PA
     // remove circles from other locations
-    function updateCircles(locsWithPA){
-        let circles = svg.selectAll('.circles').data(Array.from(locsWithPA), x => x);
+    function updateCircles(loc_ids){
+        let circles = svg.selectAll('.circles').data(Array.from(loc_ids), x => x);
         circles.enter()
             .append('circle')
+            //.append('image')
+            //.attr('xlink:href','data/un_logo.png')
+            //.attr('width', '20')
             .on('mouseover', function(d){
                 mapContainer.select('path#'+d).style('stroke', MAP_STROKE_HL_COLOR);
                 mapContainer.select('path#'+d).style('stroke-width', 2);
@@ -473,12 +483,54 @@ solution 3:
             .transition()
             .attr('r', 3);
 
-            circles.append('svg:title').text(function(d, i){return mapContainer.select('path#'+d).attr('name')});
+        circles.append('svg:title').text(function(d, i){return mapContainer.select('path#'+d).attr('name')});
 
         circles.exit()
             .attr('r', 3)
             .transition()
             .attr('r', 0)
+            .remove();
+    }
+
+
+    // same as UpdateCircles() but draws UN logos instead of circles
+    function updateUNCircles(loc_ids){
+        let circles = svg.selectAll('.un_circles').data(Array.from(loc_ids), x => x);
+        let icon_width = 12;
+        circles.enter()
+            .append('image')
+            .attr('xlink:href','data/un_bg.png')
+            .attr('width', '20')
+            .on('mouseover', function(d){
+                mapContainer.select('path#'+d).style('stroke', MAP_STROKE_HL_COLOR);
+                mapContainer.select('path#'+d).style('stroke-width', 2);
+            })
+            .on('mouseout', function(d){
+                mapContainer.select('path#'+d).style('stroke', MAP_STROKE_COLOR);
+                mapContainer.select('path#'+d).style('stroke-width', 0.5);
+            })
+            .on('click', function(d){
+                selected_country_id = d;
+                updateMapAndInfo();
+                updateInfoHeader(mapContainer.select('path#'+d).attr('name'));
+                d3.event.stopPropagation();
+            })
+            .classed('un_circles', true)
+            .attr('x', x => centroids[x][0]-icon_width/2)
+            .attr('y', x => centroids[x][1]-icon_width/2)
+            .attr('id', x => 'circle_' + x)
+            .attr('width', 0)
+            .transition()
+            .attr('width', 30)
+            .transition()
+            .attr('width', icon_width);
+
+        circles.append('svg:title').text(function(d, i){return mapContainer.select('path#'+d).attr('name') + ' - UN intervention'});
+
+        circles.exit()
+            .attr('width', 20)
+            .transition()
+            .attr('width', 0)
             .remove();
     }
     // ___________________________________________ INFO PANEL ___________________________________________
@@ -737,8 +789,10 @@ solution 3:
     // returns the same thing for broken PAs
     function locPaStatus(current_date, country_id){
         let ongoingPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date < pa.end));
-        let brokenPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
-        return {'ongoingPA':(ongoingPas.length > 0), 'brokenPA':(brokenPas.length > 0), 'ongoingPas':ongoingPas, 'brokenPas':brokenPas};
+        let ongoingUnPas = ongoingPas.filter(pa => pa.UN);
+        return {'ongoingPA': (ongoingPas.length > 0), 'is_un':(ongoingUnPas.length > 0)};
+        //let brokenPas = agreements_by_loc[country_id].map(paid => agreements_by_id[paid]).filter(pa => (current_date >= pa.start && current_date >= pa.end));
+        //return {'ongoingPA':(ongoingPas.length > 0), 'brokenPA':(brokenPas.length > 0), 'ongoingPas':ongoingPas, 'brokenPas':brokenPas};
     }
 
     // returns the number of active/broken agreements of the input conflict at the input date

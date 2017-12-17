@@ -235,7 +235,7 @@ solution 3:
             padding-left: 8px;
             padding-top: 3px;
             position: absolute;
-            color:rgb(50, 50, 50);
+            color:#6E6B68;
         }
 
         .tooltip{  
@@ -539,7 +539,7 @@ solution 3:
     }
 
     function titleToString(){
-        return '<span style="font-size:80px;">What is the impact of the United Nations over armed conflicts resolution?</span><br/><br/><br/><span style="font-size:40px;">An interactive map</span><br/><br/>';
+        return '<span style="font-size:70px;">What is the impact of the United Nations over armed conflicts resolution?</span><br/><br/><br/><span style="font-size:30px;">An interactive map</span><br/><br/>';
     }
 
     function instructionsToString(){
@@ -1078,14 +1078,14 @@ solution 3:
     function printInfoIcon(){
         d3.select('#container')
             .append('div')
-            .html( '<i class="infodiv fa fa-info-circle" aria-hidden="true" style="font-size: 30px"></i>')
+            .html( '<i class="infodiv fa fa-info-circle" aria-hidden="true" style="font-size: 40px"></i>')
             .on("mouseover", function(d) {      
                 div.transition()        
                     .duration(200)      
                     .style("opacity", 1);      
                 div.html(vizInfoToString())  
-                    .style("left", '40px')     
-                    .style("top", '10px');    
+                    .style("left", '50px')     
+                    .style("top", '20px');    
             })                  
             .on("mouseout", function(d) {       
                 div.transition()        

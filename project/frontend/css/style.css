@@ -341,7 +341,8 @@ dt{
 }
 .animation_two{
 	position: relative;
-	top: -400px;
+	top: -800px;
+	padding-top: 65px;
 }
 
 /* Info resalt --------*/
@@ -362,7 +363,7 @@ dt{
 }
 .info_white{
 	overflow: auto;
-	padding-bottom: 70px;
+	padding-bottom: 50px;
 }
 
 /* Services animations --------*/

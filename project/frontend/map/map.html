@@ -271,6 +271,13 @@ solution 3:
             opacity: 0;
         }
 
+        #storylink{
+            padding-left: 60px;
+            padding-top: 1px;
+            position: absolute;
+            color:#6E6B68;
+        }
+
         /*div.colorBox{
             width: 20px;
             height: 10px;
@@ -300,6 +307,9 @@ solution 3:
             </div>
         </div>
         <div id='mapContainer'>
+            <a id='storylink' href='https://rbsteinm.github.io/AppliedDataAnalysis/project/frontend/datastory.html' title='Tell me a story !'>
+                <i style="font-size: 40px;" class="fa fa-comment-o" aria-hidden="true"></i>
+            </a>
         </div>
     </div>
 </body>
@@ -367,8 +377,6 @@ solution 3:
         .style('opacity', 0)
         .transition()
         .style('opacity', 1);
-
-    printInfoIcon();
 
 
     // ___________________________________________ IMPORT DATA ___________________________________________
@@ -508,6 +516,7 @@ solution 3:
     function init(){
 
         displayMap();
+        printInfoIcon();
 
         // scrolling control
         svg.node().addEventListener("mousewheel", function(e){
@@ -526,7 +535,7 @@ solution 3:
            else if (key == 39) onScrollEvent(true, SMALL_STEP_SIZE);
         }
 
-        d3.select('#title')
+        /*d3.select('#title')
             .attr('height', height).html(titleToString())
             .style('opacity', 0)
             .transition().delay(700).duration(1000).style('opacity', 0.7)
@@ -534,7 +543,7 @@ solution 3:
 
         mapContainer.style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);
         infoContainer.style('opacity', 0).transition().delay(5000).duration(2500).style('opacity', 1);
-        d3.select('.infodiv').style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);
+        d3.select('.infodiv').style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);*/
 
         printDate(current_date);
         updateMapAndInfo();

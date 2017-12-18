@@ -1,0 +1,75 @@
+/*  Layout Styles -----------------------------------------*/
+
+#layout{
+	overflow: hidden;
+	position: relative;
+	background-color: #fff;
+	-webkit-transition: 0.5s all ease;
+	-moz-transition: 0.5s all ease;
+	-o-transition: 0.5s all ease;
+	-ms-transition: 0.5s all ease;
+	transition: 0.5s all ease;
+}
+.layout-wide{
+	max-width: 100%;
+	margin: auto;
+	box-shadow: none;
+	-webkit-transition: 0.5s all ease;
+	-moz-transition: 0.5s all ease;
+	-o-transition: 0.5s all ease;
+	-ms-transition: 0.5s all ease;
+	transition: 0.5s all ease;
+}
+.layout-boxed{
+	max-width: 1230px;
+	margin: 0 auto;
+	-webkit-box-shadow: 0 0 5px#888;
+	box-shadow: 0 0 5px #888;
+	-webkit-transition: 0.5s all ease;
+	-moz-transition: 0.5s all ease;
+	-o-transition: 0.5s all ease;
+	-ms-transition: 0.5s all ease;
+	transition: 0.5s all ease;
+}
+.layout-boxed-margin{
+	max-width: 1230px;
+	margin: 50px auto;
+	-webkit-box-shadow: 0 0 5px#888;
+	box-shadow: 0 0 5px #888;
+	-webkit-transition: 0.5s all ease;
+	-moz-transition: 0.5s all ease;
+	-o-transition: 0.5s all ease;
+	-ms-transition: 0.5s all ease;
+	transition: 0.5s all ease;
+}
+.layout-boxed header, 
+.layout-boxed-margin header{
+	position: relative;
+}
+
+/* COLOR CHANGER -------------------------------*/
+
+.colorbox { width:100%; height:100%; cursor:pointer; display:block; }
+.red { background-color:#e64b3c; }
+.blue { background-color:#0088cc; }
+.yellow { background-color:#fff000; }
+.green { background-color:#88C425; }
+.orange { background-color:#FC4F13; }
+.purple { background-color:#894997; }
+.pink { background-color:#FF3D7F; }
+.cocoa { background-color:#755C3B; }
+.suelte { background-color:#7FC7AF; }
+
+/* BACKGROUNDS PATTERS -------------------------------*/
+
+.bg1 { background-image: url("../../img/bg-theme/1.png"); }
+.bg2 { background-image: url("../../img/bg-theme/2.png"); }
+.bg3 { background-image: url("../../img/bg-theme/3.png"); }
+.bg4 { background-image: url("../../img/bg-theme/4.png"); }
+.bg5 { background-image: url("../../img/bg-theme/5.png"); }
+.bg6 { background-image: url("../../img/bg-theme/6.png"); }
+.bg7 { background-image: url("../../img/bg-theme/7.png"); }
+.bg8 { background-image: url("../../img/bg-theme/8.png"); }
+.bg9 { background-image: url("../../img/bg-theme/9.png"); }
+.bg10 { background-image: url("../../img/bg-theme/10.png"); }
+.bg11 { background-image: url("../../img/bg-theme/11.png"); }

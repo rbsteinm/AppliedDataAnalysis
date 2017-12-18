@@ -1,0 +1,56 @@
+.button,
+.section_title,
+.caption-head:hover,
+.flex-control-paging li a.flex-active,
+.index_static,
+.camera_wrap .camera_pag .camera_pag_ul li.cameracurrent > span{
+	background-color: #e64b3c;
+}
+.promotion_table .head_table{
+	background-color: #ff4a39;
+}
+.index_static,
+.section_title{
+	background: #e64b3c url("../../../img/bg_index_static.png");
+}
+.overlay{
+	background: #e64b3c url("../../../img/more.png") no-repeat center center;;
+	background: rgba(230, 75, 60,0.6) url("../../../img/more.png") no-repeat center center;
+}
+.arrow_results{
+	background: url("arrow_results.png") no-repeat center center;
+}
+.arrow_resultsb{
+	background: url("arrow_resultsb.png") no-repeat center center;
+}
+.promotion_table .arrow_table{
+	background: url("arrow_table_promotion.png") repeat-x center;
+}
+.camera_prev > span {
+	background: url("prev.png") no-repeat 0 0;
+}
+.camera_next > span {
+	background: url("next.png") no-repeat 0 0;
+}
+.results h2,
+.camera_caption h1 span,
+.sf-menu > li > a:hover,
+ul.filter li a:hover,
+ul.filter li a.active,
+.info_vertical span,
+.post h2 a:hover,
+.post h2 span,
+.comment .title_comment span a:hover,
+.head_table h2,
+.twitts a{
+	color: #e64b3c;
+}
+.index_static h1 span{
+	color: #222;
+}
+.comments_carousel .image{
+	border: 5px solid #e64b3c;
+}
+.arrow_coment{
+	background: url("arrow_coment.png") no-repeat center;
+}

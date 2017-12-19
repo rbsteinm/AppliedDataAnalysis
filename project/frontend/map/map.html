@@ -69,6 +69,7 @@ TODO extra: zoom
             background-color: transparent;
             width: 70%;
             height: 100%;
+            opacity: 0;
         }
         #infoContainer{
             float: right;
@@ -76,6 +77,7 @@ TODO extra: zoom
             background-color: rgba(255, 255, 255, 0.1);
             overflow-y: auto;
             overflow-x: hidden;
+            opacity: 0;
         }
 
         .infocell, .infocell_past{
@@ -464,10 +466,10 @@ TODO extra: zoom
     
     // init the viz while checking the browser used and displaying a warning message if it's not chrome
     function initBrowserCheck(){
+        mapContainer.style('opacity', 0);
+        infoContainer.style('opacity', 0);
         // if it's not chrome
         if (!(!!window.chrome && !!window.chrome.webstore)){
-            mapContainer.style('opacity', 0);
-            infoContainer.style('opacity', 0);
             d3.select('#title')
                 .attr('height', height).attr('width', width).html(browserCheckToString())
                 .style('opacity', 0)
@@ -483,7 +485,6 @@ TODO extra: zoom
 
     // initialize the visualization
     function init(){
-        mapContainer.style('opacity', 0);
         displayMap();
         printInfoIcon();
         printColorLegendText();

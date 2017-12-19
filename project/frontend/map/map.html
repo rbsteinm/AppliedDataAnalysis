@@ -323,6 +323,7 @@ solution 3:
     const SMALL_STEP_SIZE = 30; // represents the speed of the slider
     const BIG_STEP_SIZE = 365;
     const START_DATE = new Date("1970-01-01");
+    //const START_DATE = new Date("1991-05-01"); // debug
     const END_DATE = new Date("2016-12-01");
     let current_date = START_DATE;
     let mapContainer = d3.select("#mapContainer");
@@ -507,7 +508,7 @@ solution 3:
     }
 
     function browserCheckToString(){
-        let res = "<br/>We're sorry, but for the moment this viz is only supported with Google Chrome<br/><br/>";
+        let res = "<br/>We highly recommend using Google Chrome for a smoother experience !<br/><br/>";
         res += "<span style='font-size: 12px;' onclick='init();' onmouseout='this.style.textDecoration=`none`;'  onmouseover='this.style.textDecoration=`underline`;'>I don't care, take me to the viz (not recommended)</span><br/>";
         return res;
     }
@@ -518,10 +519,16 @@ solution 3:
         displayMap();
         printInfoIcon();
 
-        // scrolling control
+        // scrolling control for Chrome
         svg.node().addEventListener("mousewheel", function(e){
             moved = true;
             onScrollEvent(e.wheelDelta < 0, SMALL_STEP_SIZE)
+        }, false);
+
+        svg.node().addEventListener('DOMMouseScroll', function(e){
+            moved = true;
+            var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
+            onScrollEvent(delta < 0, SMALL_STEP_SIZE);
         }, false);
 
         // arrow keys control
@@ -535,6 +542,7 @@ solution 3:
            else if (key == 39) onScrollEvent(true, SMALL_STEP_SIZE);
         }
 
+        // TODO put animation back
         d3.select('#title')
             .attr('height', height).html(titleToString())
             .style('opacity', 0)
@@ -546,7 +554,7 @@ solution 3:
         d3.select('.infodiv').style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);
 
         printDate(current_date);
-        updateMapAndInfo();
+        //updateMapAndInfo();
     }
 
     function titleToString(){
@@ -654,15 +662,13 @@ solution 3:
             .remove();
     }
 
-
     // same as UpdateCircles() but draws UN logos instead of circles
     function updateUNCircles(loc_ids){
         let circles = svg.selectAll('.un_circles').data(Array.from(loc_ids), x => x);
         let icon_width = 12;
-        circles.enter()
+        let test = circles.enter()
             .append('image')
             .attr('xlink:href','data/un_bg.png')
-            .attr('width', '20')
             .on('mouseover', function(d){
                 mapContainer.select('path#'+d).style('stroke', MAP_STROKE_HL_COLOR);
                 mapContainer.select('path#'+d).style('stroke-width', 2);
@@ -677,21 +683,26 @@ solution 3:
                 updateInfoHeader(mapContainer.select('path#'+d).attr('name'));
                 d3.event.stopPropagation();
             })
-            .classed('un_circles', true)
+            .attr('class', 'un_circles')
             .attr('x', x => centroids[x][0]-icon_width/2)
             .attr('y', x => centroids[x][1]-icon_width/2)
             .attr('id', x => 'circle_' + x)
+            .attr('height', 0)
             .attr('width', 0)
             .transition()
+            .attr('height', 30)
             .attr('width', 30)
             .transition()
-            .attr('width', icon_width);
-
-        circles.append('svg:title').text(function(d, i){return mapContainer.select('path#'+d).attr('name') + ' - UN intervention'});
+            .attr('height', icon_width)
+            .attr('width', icon_width)
+            
+            circles.append('svg:title').html(function(d, i){return mapContainer.select('path#'+d).attr('name') + ' - UN intervention'}); // continue here
 
         circles.exit()
-            .attr('width', 20)
+            .attr('height', icon_width)
+            .attr('width', icon_width)
             .transition()
+            .attr('height', 0)
             .attr('width', 0)
             .remove();
     }
@@ -921,7 +932,7 @@ solution 3:
         let paids = conflicts_by_id[cid].PAIDs;
         if(!paids) return result;
         paids.forEach(function(paid){
-            result += '<span onclick="openClosePA(this);" open="0">';
+            result += '<span onclick="event.stopPropagation();openClosePA(this);" open="0">';
             result += closedAgreementToString(paid);
             result += '</span>'
         });
@@ -967,7 +978,8 @@ solution 3:
     // this function opens/closes a PA when it is clicked
     // input: clicked DOM element (PA cell)
     function openClosePA(cell){
-        event.stopPropagation();
+        console.log('open pa');
+        //event.stopPropagation();
         let elem = d3.select(cell);
         let open = (elem.attr('open') == '1');
         if(open){

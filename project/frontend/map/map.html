@@ -491,6 +491,10 @@ solution 3:
 
     
     function initBrowserCheck(){
+        // TODO remove that
+        init();
+        return;
+        //TODO remove that
         if (!(!!window.chrome && !!window.chrome.webstore)){
             mapContainer.style('opacity', 0);
             infoContainer.style('opacity', 0);
@@ -535,7 +539,8 @@ solution 3:
            else if (key == 39) onScrollEvent(true, SMALL_STEP_SIZE);
         }
 
-        d3.select('#title')
+        // TODO put animation back
+        /*d3.select('#title')
             .attr('height', height).html(titleToString())
             .style('opacity', 0)
             .transition().delay(700).duration(1000).style('opacity', 0.7)
@@ -543,7 +548,7 @@ solution 3:
 
         mapContainer.style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);
         infoContainer.style('opacity', 0).transition().delay(5000).duration(2500).style('opacity', 1);
-        d3.select('.infodiv').style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);
+        d3.select('.infodiv').style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);*/
 
         printDate(current_date);
         updateMapAndInfo();
@@ -654,7 +659,6 @@ solution 3:
             .remove();
     }
 
-
     // same as UpdateCircles() but draws UN logos instead of circles
     function updateUNCircles(loc_ids){
         let circles = svg.selectAll('.un_circles').data(Array.from(loc_ids), x => x);
@@ -662,7 +666,6 @@ solution 3:
         circles.enter()
             .append('image')
             .attr('xlink:href','data/un_bg.png')
-            .attr('width', '20')
             .on('mouseover', function(d){
                 mapContainer.select('path#'+d).style('stroke', MAP_STROKE_HL_COLOR);
                 mapContainer.select('path#'+d).style('stroke-width', 2);
@@ -681,17 +684,22 @@ solution 3:
             .attr('x', x => centroids[x][0]-icon_width/2)
             .attr('y', x => centroids[x][1]-icon_width/2)
             .attr('id', x => 'circle_' + x)
+            .attr('height', 0)
             .attr('width', 0)
             .transition()
+            .attr('height', 30)
             .attr('width', 30)
             .transition()
+            .attr('height', icon_width)
             .attr('width', icon_width);
 
         circles.append('svg:title').text(function(d, i){return mapContainer.select('path#'+d).attr('name') + ' - UN intervention'});
 
         circles.exit()
-            .attr('width', 20)
+            .attr('height', icon_width)
+            .attr('width', icon_width)
             .transition()
+            .attr('height', 0)
             .attr('width', 0)
             .remove();
     }

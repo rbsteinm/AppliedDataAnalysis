@@ -322,7 +322,9 @@ solution 3:
     const PATH_TO_MAP = './data/countries.geo.json';
     const SMALL_STEP_SIZE = 30; // represents the speed of the slider
     const BIG_STEP_SIZE = 365;
-    const START_DATE = new Date("1970-01-01");
+    //const START_DATE = new Date("1970-01-01");
+    //TODO CHANGE BACK
+    const START_DATE = new Date("1991-05-01");
     const END_DATE = new Date("2016-12-01");
     let current_date = START_DATE;
     let mapContainer = d3.select("#mapContainer");
@@ -551,7 +553,7 @@ solution 3:
         d3.select('.infodiv').style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);*/
 
         printDate(current_date);
-        updateMapAndInfo();
+        //updateMapAndInfo();
     }
 
     function titleToString(){
@@ -663,7 +665,7 @@ solution 3:
     function updateUNCircles(loc_ids){
         let circles = svg.selectAll('.un_circles').data(Array.from(loc_ids), x => x);
         let icon_width = 12;
-        circles.enter()
+        let test = circles.enter()
             .append('image')
             .attr('xlink:href','data/un_bg.png')
             .on('mouseover', function(d){
@@ -680,7 +682,7 @@ solution 3:
                 updateInfoHeader(mapContainer.select('path#'+d).attr('name'));
                 d3.event.stopPropagation();
             })
-            .classed('un_circles', true)
+            .attr('class', 'un_circles')
             .attr('x', x => centroids[x][0]-icon_width/2)
             .attr('y', x => centroids[x][1]-icon_width/2)
             .attr('id', x => 'circle_' + x)
@@ -691,9 +693,9 @@ solution 3:
             .attr('width', 30)
             .transition()
             .attr('height', icon_width)
-            .attr('width', icon_width);
-
-        circles.append('svg:title').text(function(d, i){return mapContainer.select('path#'+d).attr('name') + ' - UN intervention'});
+            .attr('width', icon_width)
+            
+            circles.append('svg:title').html(function(d, i){return mapContainer.select('path#'+d).attr('name') + ' - UN intervention'}); // continue here
 
         circles.exit()
             .attr('height', icon_width)
@@ -929,7 +931,7 @@ solution 3:
         let paids = conflicts_by_id[cid].PAIDs;
         if(!paids) return result;
         paids.forEach(function(paid){
-            result += '<span onclick="openClosePA(this);" open="0">';
+            result += '<span onclick="event.stopPropagation();openClosePA(this);" open="0">';
             result += closedAgreementToString(paid);
             result += '</span>'
         });
@@ -975,7 +977,8 @@ solution 3:
     // this function opens/closes a PA when it is clicked
     // input: clicked DOM element (PA cell)
     function openClosePA(cell){
-        event.stopPropagation();
+        console.log('open pa');
+        //event.stopPropagation();
         let elem = d3.select(cell);
         let open = (elem.attr('open') == '1');
         if(open){

@@ -10,6 +10,7 @@
 // Copyright: (C) 2013 
 // --
 
+
 $(document).ready(function(){	
 
 	'use strict';
@@ -146,7 +147,8 @@ $(document).ready(function(){
 	
 	//=================================== Animations =====================================//
 
-	var $item = jQuery('.info_resalt');
+	/*var $item = jQuery('.info_resalt');
+
         $item.hover(function(){             
      	   jQuery(this).find('.animation').stop(true, true).animate({right: 0, top: 0},500);            
      	}); 
@@ -154,11 +156,49 @@ $(document).ready(function(){
      var $item_two = jQuery('.info_white');
         $item_two.hover(function(){             
      	   jQuery(this).find('.animation_two').stop(true, true).animate({left: 0, top: 0},500);            
-     	}); 
+     	}); */
 
     //================================== Scroll Efects ================================//
 
+	 var $item = jQuery('.info_resalt');
+	 var done = false;
+	 var triggered_resalt = {};
+	 var triggered_white = {};
+
+	 $('').each(function(index, value){
+	 	triggered_resalt[index] = false;
+	 });
+
+	 $('').each(function(index, value){
+	 	triggered_white[index] = false;
+	 });
+
+	 // on each scroll event
 	 $(window).scroll(function() {
+
+	 	// check if a resalt cell is on screen
+	 	$('.info_resalt').each(function(index, value){
+		 	if ($(value).isInViewport()) {
+	    		if(!triggered_resalt[index]){
+	    			triggered_resalt[index] = true;
+	    			$(value).find('.animation').stop(true, true).animate({right: 0, top: 0},700);
+	    			//console.log('triggered')
+	    		}
+			}
+	 	});
+
+	 	$('.info_white').each(function(index, value){
+		 	if ($(value).isInViewport()) {
+	    		if(!triggered_white[index]){
+	    			triggered_white[index] = true;
+	    			$(value).find('.animation_two').stop(true, true).animate({right: 0, top: 0},700);
+	    			//console.log('triggered')
+	    		}
+			}
+	 	});
+
+
+
 
 	    $('.info_vertical, .info_title i').each(function(){
 	    	var imagePos = $(this).offset().top;
@@ -170,6 +210,17 @@ $(document).ready(function(){
 	       });     	                    
 
 	  });
+
+
+	 $.fn.isInViewport = function() {
+		var elementTop = $(this).offset().top;
+		var elementBottom = elementTop + $(this).outerHeight();
+		var viewportTop = $(window).scrollTop();
+		var viewportBottom = viewportTop + $(window).height();
+		var viewportMid = viewportBottom - (viewportBottom - viewportTop)/2;
+		return elementTop < viewportMid;
+		//return elementBottom > viewportTop+300 && elementTop < viewportBottom-300;
+	};
 
 
 	//================================== Grid Gallery ====================================//

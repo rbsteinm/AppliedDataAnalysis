@@ -4,7 +4,7 @@
 The United Nations often gets criticised for all the wars it could not prevent and its impact in our society has often been questioned. The UN exist since 1945, although until today the amount of conflicts around the world has not significantly diminished, does this mean that the UN is inefficient ? The Israelo-Palestinian conflict is allmost as old as the UN and no Peace Agreements (PA) could completely stop it as of today, so does the efforts made through the UN organization are worth the results ? Such a question would request more than a statistical study to be answered. Hence, we will focus on studying the impact of the UN in the domain of conflict resolution. 
 Our study aims at giving an objective analysis of the impact of UN peace agreements on the evolution of conflicts around the world. We present the results of our analysis as a data story. Information relative to both conflicts and peace treaties are displayed on a world map in order to get an insight on the impact they have on one another. 
 
-To perform this, we used the UCDP dataset which provides information about the conflicts from 1945 to 2016 and peace agreements from 1975 to 2011.
+To perform this, we used the [UCDP dataset](http://ucdp.uu.se) which provides information about the conflicts from 1945 to 2016 and peace agreements from 1975 to 2011.
 
 
 # Research questions
@@ -39,13 +39,17 @@ Our data story presents the results of our explorations and the statistical stud
 ### A few facts about conflicts and peace agreements :
 
 **More than 30% of the conflicts took place in Africa.**
+
 **72% of the peace agreements concern governmental incompabilities.**
+
 **On average, a conflict lasts more than 19 years in Asia.**
+
 **More than 50% of the conflicts that benefited from a peace agreement were located in Africa**
+
 **70% of the conflicts solved by the UN started because of a governmental incompatibility.**
 
 
 
-## What is the impact of the UN?
+## What can we conclude about the impact of the UN?
 
 Our study showed that after matching on the peace agreements and on the conflicts, the UN seems to perform better than other third party actors. Indeed, only 33% of the UN Peace agreements were broken while this number goes up to 42% for other actors. However, it is important to note that performing a Fisher exact test on these proportions outputed a p-value of 0.37 which means that we cannot be reject the null hypothesis that the UN and other parties are equally likely to have their peace agreement broken. In the domain of conflict resolution, our study showed that the UN have an impact although the relatively high p-value we obtained in the Fisher exact test cannot prove scientifically its impact. It should be noted that UN biggest challenges does not land in the resolution of existing conflicts but rather in the settlement of communication channels to avoid the creation of tensions between countries. For further research, An analysis of the interactions between state leaders and the tension level between countries.

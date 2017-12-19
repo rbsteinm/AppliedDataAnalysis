@@ -290,14 +290,24 @@ solution 3:
             padding-bottom: 0px;
         }
 
-        /*div.colorBox{
-            width: 20px;
-            height: 10px;
+        #legend{
+            position: absolute;
+            top: 10px;
+            left: 40px;
+            z-index: 2;
         }
 
-        div#legendBox{
-            height: 100px;
-        }*/
+        #legendGreen{
+            position: absolute;
+            width: 300px;
+            left: 150px;
+        }
+
+        #legendRed{
+            position: absolute;
+            width: 300px;
+            left: 550px;
+        }
 
     </style>
     <script src="https://d3js.org/d3.v4.min.js"> </script>
@@ -307,7 +317,6 @@ solution 3:
 </head>
 <body>
     <div id='container'>
-        <!--<div id='legendBox'></div>-->
         <div id='title'></div>
         <div id='infoContainer'>
             <div id='infocell-header'>
@@ -319,6 +328,10 @@ solution 3:
             </div>
         </div>
         <div id='mapContainer'>
+            <div id='legend'>
+                <img src='data/legendgreen.png' id='legendGreen'/>
+                <img src='data/legendred.png' id='legendRed'/>
+            </div>
             <a id='storylink' href='https://rbsteinm.github.io/AppliedDataAnalysis/project/frontend/datastory.html' title='Tell me a story !'>
                 <i style="font-size: 40px;" class="fa fa-comment-o" aria-hidden="true"></i>
             </a>
@@ -530,6 +543,7 @@ solution 3:
 
         displayMap();
         printInfoIcon();
+        printColorLegendText();
 
         // scrolling control for Chrome
         svg.node().addEventListener("mousewheel", function(e){
@@ -567,7 +581,6 @@ solution 3:
            else if (key == 39) onScrollEvent(true, SMALL_STEP_SIZE);
         }
 
-        // TODO put animation back
         d3.select('#title')
             .attr('height', height).html(titleToString())
             .style('opacity', 0)
@@ -1183,40 +1196,69 @@ solution 3:
             .remove();
     }
 
-    // do this in a closure so that it can be executed only once
-    /*var removeInstructionsBubble = (function() {
-        var executed = false;
-        return function() {
-            if (!executed) {
-                executed = true;
-                d3.select('#instructions')
-                    .transition().delay(4000).duration(0)
-                    .style('top', '150px')
-                    .transition().duration(600)
-                    .style('top', '-400px')
-                    .remove();
-            }
-        };
-    })();*/
+    // prints the textual fields of the color legend on top
+    function printColorLegendText(){
+        d3.select('#legend')
+            .append('span')
+            .text('consecutive peace days')
+            .style('left', '240px')
+            .style('width', '120px')
+            .style('font-size', '10px')
+            .style('top', '12px')
+            .style('color', COLOR_D)
+            .style('position', 'absolute');
 
-    /*function colorScale(c1, c2){
-        var legend_box = d3.select("#legendBox"),
-        length = 10,
-        color = d3.scaleLinear().domain([1,length])
-          .interpolate(d3.interpolateHcl)
-          .range([d3.rgb(c1), d3.rgb(c2)]);
+        d3.select('#legend')
+            .append('span')
+            .text('0')
+            .style('left', '148px')
+            .style('width', '5px')
+            .style('font-size', '10px')
+            .style('top', '12px')
+            .style('color', COLOR_D)
+            .style('position', 'absolute');
 
+        d3.select('#legend')
+            .append('span')
+            .text('5000')
+            .style('left', '435px')
+            .style('width', '5px')
+            .style('font-size', '10px')
+            .style('top', '12px')
+            .style('color', COLOR_D)
+            .style('position', 'absolute');
 
-      for (var i = 0; i < length; i++) {
-        legend_box.append('div').attr('class', 'colorBox').attr('style', function (d) {
-          return 'background-color: ' + color(i);
-        });
-      }
+        d3.select('#legend')
+            .append('span')
+            .text('consecutive conflict days')
+            .style('left', '638px')
+            .style('width', '130px')
+            .style('font-size', '10px')
+            .style('top', '12px')
+            .style('color', COLOR_D)
+            .style('position', 'absolute');
+
+        d3.select('#legend')
+            .append('span')
+            .text('0')
+            .style('left', '548px')
+            .style('width', '5px')
+            .style('font-size', '10px')
+            .style('top', '12px')
+            .style('color', COLOR_D)
+            .style('position', 'absolute');
+
+        d3.select('#legend')
+            .append('span')
+            .text('5000')
+            .style('left', '835px')
+            .style('width', '5px')
+            .style('font-size', '10px')
+            .style('top', '12px')
+            .style('color', COLOR_D)
+            .style('position', 'absolute');
+
     }
-
-    let red1 = d3.hsl(360, 0.3, 0.5);
-    let red2 = d3.hsl(360, 1, 0.5);
-    colorScale(red1, red2)*/
 
 </script>
 </html>

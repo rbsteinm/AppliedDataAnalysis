@@ -57,6 +57,6 @@ In the domain of conflict resolution, our study showed that the UN might have an
 
 ## Contributions 
 
-- Raphaël Steinmann: Preprocessing of the data, implentation of the [interactive map](https://rbsteinm.github.io/AppliedDataAnalysis/), specific data processing/preparation for the map, data story design.
+- Raphaël Steinmann: Preprocessing of the data, implentation of the [interactive map](https://rbsteinm.github.io/AppliedDataAnalysis/project/frontend/map/map.html), specific data processing/preparation for the map, data story design.
 - Louis Duvigneau: Preprocessing of the data, analysis of the conflicts distribution, propensity score matchings and other, statistical analysis of the results, redaction of the data story.
 - Malo Grisard: Preprocessing of the data, analysis of the peace agreements distribution and interactions, redaction of the data story.

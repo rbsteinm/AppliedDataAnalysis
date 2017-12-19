@@ -45,7 +45,7 @@ We created an interactive interface to present a wide view of the conflicts arou
 
 This interactive visualization was created with javascript, mostly using Mike Bostock's famous 'D3JS' library.
 
-Our data story presents the results of our explorations and the statistical study of the impact of the UN in conflicts resolution. To do so we computed a propensity score on a smart matching of the treated and control group of our study.
+Our data story presents the results of our explorations and the statistical study of the impact of the UN in conflicts resolution. To do so we computed a propensity score on a smart matching of the treated and control group of our study. We then computed the Fishr exact test to get the p-value.
 
 
 

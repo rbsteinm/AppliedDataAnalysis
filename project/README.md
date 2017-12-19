@@ -7,7 +7,7 @@ The result of our study can be found [here](https://rbsteinm.github.io/AppliedDa
 The United Nations often gets criticised for all the wars it could not prevent and its impact in our society has often been questioned. The UN exist since 1945, although until today the amount of conflicts around the world has not significantly diminished, does this mean that the UN is inefficient ? The Israelo-Palestinian conflict is allmost as old as the UN and no Peace Agreements (PA) could completely stop it as of today, so does the efforts made through the UN organization are worth the results ? Such a question would request more than a statistical study to be answered. Hence, we will focus on studying the impact of the UN in the domain of conflict resolution. 
 Our study aims at giving an objective analysis of the impact of UN peace agreements on the evolution of conflicts around the world. We present the results of our analysis as a data story. Information relative to both conflicts and peace treaties are displayed on a world map in order to get an insight on the impact they have on one another. 
 
-To perform this, we used the [UCDP dataset](http://ucdp.uu.se) which provides information about the conflicts from 1945 to 2016 and peace agreements from 1975 to 2011.
+To perform this, we used the [UCDP dataset](http://ucdp.uu.se/downloads/) which provides information about the conflicts from 1945 to 2016 and peace agreements from 1975 to 2011.
 
 # Research questions
 Here are some problematics we address in our analysis:

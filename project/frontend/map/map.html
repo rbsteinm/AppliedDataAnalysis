@@ -322,9 +322,8 @@ solution 3:
     const PATH_TO_MAP = './data/countries.geo.json';
     const SMALL_STEP_SIZE = 30; // represents the speed of the slider
     const BIG_STEP_SIZE = 365;
-    //const START_DATE = new Date("1970-01-01");
-    //TODO CHANGE BACK
-    const START_DATE = new Date("1991-05-01");
+    const START_DATE = new Date("1970-01-01");
+    //const START_DATE = new Date("1991-05-01"); // debug
     const END_DATE = new Date("2016-12-01");
     let current_date = START_DATE;
     let mapContainer = d3.select("#mapContainer");
@@ -493,10 +492,6 @@ solution 3:
 
     
     function initBrowserCheck(){
-        // TODO remove that
-        init();
-        return;
-        //TODO remove that
         if (!(!!window.chrome && !!window.chrome.webstore)){
             mapContainer.style('opacity', 0);
             infoContainer.style('opacity', 0);
@@ -513,7 +508,7 @@ solution 3:
     }
 
     function browserCheckToString(){
-        let res = "<br/>We're sorry, but for the moment this viz is only supported with Google Chrome<br/><br/>";
+        let res = "<br/>We highly recommend using Google Chrome for a smoother experience !<br/><br/>";
         res += "<span style='font-size: 12px;' onclick='init();' onmouseout='this.style.textDecoration=`none`;'  onmouseover='this.style.textDecoration=`underline`;'>I don't care, take me to the viz (not recommended)</span><br/>";
         return res;
     }
@@ -524,10 +519,16 @@ solution 3:
         displayMap();
         printInfoIcon();
 
-        // scrolling control
+        // scrolling control for Chrome
         svg.node().addEventListener("mousewheel", function(e){
             moved = true;
             onScrollEvent(e.wheelDelta < 0, SMALL_STEP_SIZE)
+        }, false);
+
+        svg.node().addEventListener('DOMMouseScroll', function(e){
+            moved = true;
+            var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
+            onScrollEvent(delta < 0, SMALL_STEP_SIZE);
         }, false);
 
         // arrow keys control
@@ -542,7 +543,7 @@ solution 3:
         }
 
         // TODO put animation back
-        /*d3.select('#title')
+        d3.select('#title')
             .attr('height', height).html(titleToString())
             .style('opacity', 0)
             .transition().delay(700).duration(1000).style('opacity', 0.7)
@@ -550,7 +551,7 @@ solution 3:
 
         mapContainer.style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);
         infoContainer.style('opacity', 0).transition().delay(5000).duration(2500).style('opacity', 1);
-        d3.select('.infodiv').style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);*/
+        d3.select('.infodiv').style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);
 
         printDate(current_date);
         //updateMapAndInfo();

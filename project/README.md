@@ -36,7 +36,7 @@ We will mainly use the *UCDP Georeferenced Event Dataset* (GED) which gives a lo
 
 We plan to use the *UCDP/PRIO Armed Conflict Dataset* to get information about all the conflicts (mainly casualties and location) and then use the *UCDP peace agreement dataset* to see which of theses conflicts were resolved and if some new conflicts appear at the same location shortly after.
 
-The full research is made in the *FinalNotebook.ipynb* file. We present the results of our research in the form of a [datastory and an interactive map](https://rbsteinm.github.io/AppliedDataAnalysis/project/frontend/).
+The full research is made in the *FinalNotebook.ipynb* file. We present the results of our research in the form of a [data story and an interactive map](https://rbsteinm.github.io/AppliedDataAnalysis/project/frontend/).
 
 
 ## Visual representation of the information

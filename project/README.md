@@ -21,9 +21,7 @@ To perform this, we used the [UCDP dataset](http://ucdp.uu.se) which provides in
 # Research questions
 Here are the problematics we would like to address:
 
-- What are the biggest conflicts?
-  - How do they evolve? 
-  - What are the (human) casualties? 
+- What kind of conflicts benefit the most from peace agreements? 
 - What percentage of conflicts benefited from UN peace agreements?
 - What impact do peace agreements have on conflicts? 
   - Do they bring stability? 
@@ -36,7 +34,7 @@ We will mainly use the *UCDP Georeferenced Event Dataset* (GED) which gives a lo
 
 We plan to use the *UCDP/PRIO Armed Conflict Dataset* to get information about all the conflicts (mainly casualties and location) and then use the *UCDP peace agreement dataset* to see which of theses conflicts were resolved and if some new conflicts appear at the same location shortly after.
 
-The full research is made in the *FinalNotebook.ipynb* file. We present the results of our research in the form of a [data story and an interactive map](https://rbsteinm.github.io/AppliedDataAnalysis/project/frontend/).
+The full research is made in the *FinalNotebook.ipynb* file. We present the results of our research in the form of a [data story and an interactive map](https://rbsteinm.github.io/AppliedDataAnalysis/).
 
 
 ## Visual representation of the information
@@ -51,4 +49,14 @@ Our data story presents the results of our explorations and the statistical stud
 
 ## What can we conclude about the impact of the UN?
 
-Our study showed that after matching on the peace agreements and on the conflicts, the UN seems to perform better than other third party actors. Indeed, only 33% of the UN Peace agreements were broken while this number goes up to 42% for other actors. However, it is important to note that performing a Fisher exact test on these proportions outputed a p-value of 0.37 which means that we cannot be reject the null hypothesis that the UN and other parties are equally likely to have their peace agreement broken. In the domain of conflict resolution, our study showed that the UN have an impact although the relatively high p-value we obtained in the Fisher exact test cannot prove scientifically its impact. It should be noted that UN biggest challenges does not land in the resolution of existing conflicts but rather in the settlement of communication channels to avoid the creation of tensions between countries. For further research, An analysis of the interactions between state leaders and the tension level between countries.
+Our study showed that after matching on the peace agreements and on the conflicts, the UN seems to perform better than other third party actors. Indeed, only 33% of the UN Peace agreements were broken while this number goes up to 42% for the other actors.
+
+However, it is important to note that performing a Fisher exact test on these proportions outputed a p-value of 0.37 which means that we cannot reject the null hypothesis that the UN and other parties are equally likely to have their peace agreement broken. If you are interested in these technical p-values analysis, you can have a look at our notebook.
+
+In the domain of conflict resolution, our study showed that the UN might have an impact although the relatively high p-value we obtained in the Fisher test cannot prove this impact 'scientifically'. It should be noted that UN biggest challenges does not land in the resolution of existing conflicts but rather in the settlement of communication channels to avoid the creation of tensions between countries. For further research, An analysis of the interactions between state leaders and the tension level between countries could be made.
+
+## Contributions 
+
+- Raphaël Steinmann: Preprocessing of the data, implentation of the [interactive map](https://rbsteinm.github.io/AppliedDataAnalysis/), specific data processing/preparation for the map, data story design.
+- Louis Duvigneau: Preprocessing of the data, analysis of the conflicts distribution, propensity score matchings and other, statistical analysis of the results, redaction of the data story.
+- Malo Grisard: Preprocessing of the data, analysis of the peace agreements distribution and interactions, redaction of the data story.

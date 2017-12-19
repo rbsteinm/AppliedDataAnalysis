@@ -114,7 +114,7 @@ solution 3:
         }
         #infoContainer{
             float: right;
-            width: 29%;
+            width: 29.8%;
             /*border-radius: 10px;*/
             background-color: rgba(255, 255, 255, 0.1);
             overflow-y: auto;
@@ -276,6 +276,18 @@ solution 3:
             padding-top: 1px;
             position: absolute;
             color:#6E6B68;
+        }
+
+        div#instructions{
+            text-align: center;
+            background-color: #C9C4BD;
+            border-color: #6E6B68;
+            color: #5C5A56;
+            border-style: solid;
+            border-width: 2px;
+            border-radius: 10px;
+            padding: 20px;
+            padding-bottom: 0px;
         }
 
         /*div.colorBox{
@@ -521,20 +533,33 @@ solution 3:
 
         // scrolling control for Chrome
         svg.node().addEventListener("mousewheel", function(e){
-            moved = true;
+            if(!moved){
+                console.log('remove instructions bubble');
+                moved = true;
+                removeInstructionsBubble();
+            }
             onScrollEvent(e.wheelDelta < 0, SMALL_STEP_SIZE)
         }, false);
 
         svg.node().addEventListener('DOMMouseScroll', function(e){
-            moved = true;
+            if(!moved){
+                console.log('remove instructions bubble');
+                moved = true;
+                removeInstructionsBubble();
+            }
             var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
             onScrollEvent(delta < 0, SMALL_STEP_SIZE);
         }, false);
 
         // arrow keys control
         window.onkeydown = function(e) {
-            moved = true;
            var key = e.keyCode ? e.keyCode : e.which;
+
+            if(!moved &&(key == 37 || key == 39)){
+                console.log('remove instructions bubble');
+                moved = true;
+                removeInstructionsBubble();
+            }
 
            // left arrow
            if (key == 37) onScrollEvent(false, SMALL_STEP_SIZE);
@@ -553,6 +578,8 @@ solution 3:
         infoContainer.style('opacity', 0).transition().delay(5000).duration(2500).style('opacity', 1);
         d3.select('.infodiv').style('opacity', 0).transition().delay(4000).duration(1500).style('opacity', 1);
 
+        printInstructionsBubble(7000);
+
         printDate(current_date);
         //updateMapAndInfo();
     }
@@ -562,7 +589,7 @@ solution 3:
     }
 
     function instructionsToString(){
-        return 'Use <i class="fa fa-arrow-left" aria-hidden="true"></i> <i class="fa fa-arrow-right" aria-hidden="true"></i> or scroll your mouse wheel to navigate through time<br/><br/>';
+        return 'Use the <i class="fa fa-arrow-left" aria-hidden="true"> </i> <i class="fa fa-arrow-right" aria-hidden="true"></i> arrow keys or scroll your mouse wheel to navigate through time<br/><br/>';
     }
 
 
@@ -1124,6 +1151,53 @@ solution 3:
     function vizInfoToString(){
         return "<strong><i>What is the pupose of the viz?</i></strong><br/><br/>This viz shows the evolution of armed conflicts around the world and the different peace treaties signed as part of these conflicts, with a particular focus on the United Nations interventions.<br/><br/><strong><i>How does this work?</i></strong><br/><br/>You can simply scroll, or use the left and right arrow keys to navigate through time. The current date is displayed in the top-right corner of your screen. If you want to focus on a particular country, just click it.<br/><br/><strong><i>Armed conflicts?</i></strong><br/><br/>An armed conflict is a contested incompatibility that concerns government and/or territory where the use of armed force between two parties, of which at least one is the government of a state, results in at least 25 battle-related deaths in a calendar year. A country is considered to be in a state of conflict if its government has a primary claim to the issue in dispute.<br/><br/><strong><i>What's with the ugly coloring?</i></strong><br/><br/>Well I'm glad you ask! A country colored in green is at peace, while a red country is currently involved in at least one conflict. Note that it does not necessarily mean that the conflict(s) is/are taking place in the aforementioned country! The longer a country has been at peace/in a state of conflict, the more saturated (i.e. vivid) its color. The color will get stronger and stronger, until it stabilizes at 5000 days (~ 13 years). If a country is neither green nor red, it means there is simply no conflict at all there.<br/><br/><strong><i>And the peace agreements?</i></strong><br/><br/>A blue circle displayed on a country means that at least one peace agreement involving this country is active. If the circle turns into a white icon (which is actually the United Nations' logo, but you can't see it because it's too small/thin/light (blame them, not me)), it means that the United Nations was involved in at least one treaty that concerns this country and is still active at the current date.<br/><br/><strong><i>What about the panel on the right?</i></strong><br/><br/>By default, it shows all the active conflicts worldwide. When you click a country, it will show the currently active but also the past (resolved) conflicts involving this country's government. Clicking a conflict will display all the peace agreements signed in the scope of this conflict (if any). You can also click any agreement to learn more about it. A UN logo in the top-right corner of an agreement's cell means that the United Nations were involved in its conclusion.<br/><br/><strong><i>Where did you get all this data?</i></strong><br/><br/>The data comes from the Uppsala Conflict Data Program (UCDP) (http://ucdp.uu.se/downloads/)<br/><br/><strong><i>Authors</i></strong><br/><br/>This data visualization was realized by <strong>Raphaël Steinmann</strong> in the scope of Prof. Robert West's Applied Data Analysis course at EPFL. It comes along with a deeper analysis in the form of a data story realized by <strong>Louis Duvigneau</strong> and <strong>Malo Grisard</strong> (see link on the right).<br/><br/><strong><i>Running compatibilities</i></strong><br/><br/>This viz was developped and testing on Google Chrome. As this project was conducted in less than two months, there is no guarantee that it runs perfectly on other browsers.";
     }
+
+    // prints the instruction pop-up at the beginning of the viz
+    function printInstructionsBubble(delay){
+        let elemwidth = 400;
+        let elemheight = 60;
+        console.log(width)
+        let bubble = d3.select('#container')
+            .append('div')
+            .attr('id', 'instructions')
+            .style('width', elemwidth+'px')
+            //.style('height', elemheight+'px')
+            .style('left', width/2-elemwidth/2 + 'px')
+            .style('position', 'absolute')
+            .html(instructionsToString())
+            .style('top', '-300px')
+            .transition().delay(delay).duration(1000)
+            .style('top', '170px')
+            .transition().delay(0).duration(400)
+            .style('top', '150px');
+    }
+
+    // removes the instructions popup
+    // called only once the first time an arrow key is pressed
+    // or the mouse is scrolled
+    function removeInstructionsBubble(){
+        d3.select('#instructions')
+            .style('top', '150px')
+            .transition().delay(100).duration(600)
+            .style('top', '-400px')
+            .remove();
+    }
+
+    // do this in a closure so that it can be executed only once
+    /*var removeInstructionsBubble = (function() {
+        var executed = false;
+        return function() {
+            if (!executed) {
+                executed = true;
+                d3.select('#instructions')
+                    .transition().delay(4000).duration(0)
+                    .style('top', '150px')
+                    .transition().duration(600)
+                    .style('top', '-400px')
+                    .remove();
+            }
+        };
+    })();*/
 
     /*function colorScale(c1, c2){
         var legend_box = d3.select("#legendBox"),

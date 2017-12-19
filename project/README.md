@@ -6,6 +6,17 @@ Our study aims at giving an objective analysis of the impact of UN peace agreeme
 
 To perform this, we used the [UCDP dataset](http://ucdp.uu.se) which provides information about the conflicts from 1945 to 2016 and peace agreements from 1975 to 2011.
 
+### Facts about conflicts and peace agreements :
+
+**More than 30% of the conflicts took place in Africa.**
+
+**72% of the peace agreements concern governmental incompabilities.**
+
+**On average, a conflict lasts more than 19 years in Asia.**
+
+**More than 50% of the conflicts that benefited from a peace agreement were located in Africa**
+
+**70% of the conflicts solved by the UN started because of a governmental incompatibility.**
 
 # Research questions
 Here are the problematics we would like to address:
@@ -35,18 +46,6 @@ We created an interactive interface to present a wide view of the conflicts arou
 This interactive visualization was created with javascript, mostly using Mike Bostock's famous 'D3JS' library.
 
 Our data story presents the results of our explorations and the statistical study of the impact of the UN in conflicts resolution. To do so we computed a propensity score on a smart matching of the treated and control group of our study.
-
-### A few facts about conflicts and peace agreements :
-
-**More than 30% of the conflicts took place in Africa.**
-
-**72% of the peace agreements concern governmental incompabilities.**
-
-**On average, a conflict lasts more than 19 years in Asia.**
-
-**More than 50% of the conflicts that benefited from a peace agreement were located in Africa**
-
-**70% of the conflicts solved by the UN started because of a governmental incompatibility.**
 
 
 

@@ -1,7 +1,7 @@
 # Do the United Nations peace agreements have an impact on conflicts resolution around the world ?
 
 # Read the data story and explore the map
-The result of our study can be found [here](https://rbsteinm.github.io/AppliedDataAnalysis)
+The result of our study can be found [here](https://rbsteinm.github.io/AppliedDataAnalysis). If you want to follow our data analysis process, please refer to *FinalNotebook.ipynb*.
 
 # Abstract
 The United Nations often gets criticised for all the wars it could not prevent and its impact in our society has often been questioned. The UN exist since 1945, although until today the amount of conflicts around the world has not significantly diminished, does this mean that the UN is inefficient ? The Israelo-Palestinian conflict is allmost as old as the UN and no Peace Agreements (PA) could completely stop it as of today, so does the efforts made through the UN organization are worth the results ? Such a question would request more than a statistical study to be answered. Hence, we will focus on studying the impact of the UN in the domain of conflict resolution. 
